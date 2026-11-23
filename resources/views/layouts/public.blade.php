@@ -8,7 +8,7 @@
   <title>@yield('title','Beranda') · PANITIA HUB RT 03</title>
   @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
-<body class="public-body">
+<body class="public-body {{ request()->routeIs('public.home') ? 'rt03-independence-theme' : '' }}">
   <div class="public-topline"><span>WARGA RT 03</span><span>BERSAMA • BERGERAK • BERKARYA</span></div>
   <header class="public-header">
     <a class="brand" href="{{ route('public.home') }}" aria-label="PANITIA HUB RT 03, beranda">

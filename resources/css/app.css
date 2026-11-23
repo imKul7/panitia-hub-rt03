@@ -419,3 +419,361 @@
   .rt03-neighborhood-v2 .neighborhood-media img { transition: none; }
 }
 /* END RT03-HERO-REDESIGN-V2 */
+
+
+/* ==============================================================
+   PANITIA HUB RT 03 — RED & WHITE PUBLIC LANDING, 2027
+   Intentional editorial design: Indonesian red, crisp white,
+   readable ink. Restricted to home; no internal workspace changes.
+   ============================================================== */
+.rt03-independence-theme {
+  --indonesia-red:#c91f2d;
+  --indonesia-red-deep:#9d1728;
+  --indonesia-rose:#fff1ef;
+  --indonesia-cream:#fffaf7;
+  background:var(--indonesia-cream);
+}
+.rt03-independence-theme .public-topline {
+  background:linear-gradient(90deg,#a71c29,#d22e39 65%,#b81c2a);
+  color:#fff;
+}
+.rt03-independence-theme .public-header {
+  background:#fff;
+  border-bottom:1px solid #f1dfde;
+  box-shadow:0 7px 24px rgba(128,23,34,.035);
+}
+.rt03-independence-theme .public-nav a.is-active:after {
+  background:var(--indonesia-red);
+}
+.rt03-independence-theme .header-login {
+  background:var(--indonesia-red);
+  color:#fff;
+  box-shadow:0 6px 16px rgba(174,22,38,.12);
+}
+.rt03-independence-theme .header-login:hover {
+  background:var(--indonesia-red-deep);
+}
+.rt03-independence-theme .rt03-hero-v2 {
+  background:#fff9f6;
+}
+.rt03-independence-theme .rt03-hero-v2 .hero-copy {
+  background:
+    radial-gradient(ellipse at 90% 7%,rgba(234,56,69,.08),transparent 54%),
+    linear-gradient(140deg,#fffdfb 10%,#fff3f1 100%);
+}
+.rt03-independence-theme .rt03-hero-v2 .rt03-hero-mark {
+  background:rgba(158,23,39,.87);
+  border-color:rgba(255,255,255,.46);
+  box-shadow:0 8px 20px rgba(57,16,23,.16);
+}
+.rt03-independence-theme .rt03-hero-v2 .rt03-hero-footnote {
+  border-color:#eddbd7;
+  color:#8f6d70;
+}
+.rt03-independence-theme .intro-section {
+  background:#fff;
+}
+.rt03-independence-theme .feature-tile {
+  background:linear-gradient(165deg,#fff 64%,#fff6f4 100%);
+  border-color:#efdfdc;
+}
+.rt03-independence-theme .feature-tile:hover {
+  border-color:#eab6b8;
+  box-shadow:0 15px 30px rgba(158,23,39,.075);
+}
+.rt03-independence-theme .feature-tile .tile-arrow {
+  background:var(--indonesia-rose);
+  color:var(--indonesia-red-deep);
+}
+.rt03-independence-theme .rt03-neighborhood-v2 {
+  background:#fff9f7;
+}
+.rt03-independence-theme .rt03-neighborhood-v2 .neighborhood-media-tag {
+  background:rgba(161,28,42,.93);
+  border:1px solid rgba(255,255,255,.33);
+}
+.rt03-independence-theme .two-column-section {
+  background:linear-gradient(125deg,#fff7f4 0%,#fbe8e7 100%);
+}
+.rt03-independence-theme .two-column-section .agenda-list,
+.rt03-independence-theme .two-column-section .agenda-row {
+  border-color:#e8c8c5;
+}
+.rt03-independence-theme .notices-section {
+  background:#fff;
+}
+.rt03-independence-theme .notice-tile {
+  border-color:#eee0dd;
+  background:linear-gradient(158deg,#fff,#fffaf8);
+}
+/* Closing: slow living gradient + restrained translucent light. */
+.rt03-independence-theme .rt03-closing-indonesia {
+  position:relative;
+  isolation:isolate;
+  min-height:440px;
+  overflow:hidden;
+  padding:clamp(74px,8vw,126px) min(7vw,118px);
+  display:flex;
+  justify-content:flex-start;
+  align-items:center;
+  background:linear-gradient(118deg,#9f1726 0%,#c92335 25%,#e4454c 49%,#bf2030 72%,#a6192b 100%);
+  background-size:230% 230%;
+  animation:rt03-red-flow 19s ease-in-out infinite;
+  color:#fff;
+}
+.rt03-independence-theme .rt03-closing-indonesia::before {
+  content:"";
+  position:absolute;
+  z-index:0;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(115deg,transparent 5%,rgba(255,255,255,.08) 35%,transparent 53%);
+  background-size:220% 100%;
+  animation:rt03-light-sweep 17s linear infinite;
+}
+.rt03-independence-theme .rt03-closing-indonesia::after {
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:3px;
+  background:linear-gradient(90deg,white 0%,white 42%,rgba(255,255,255,.35) 65%,white 100%);
+  opacity:.8;
+}
+.rt03-independence-theme .rt03-closing-atmosphere {
+  position:absolute;
+  z-index:0;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+}
+.rt03-independence-theme .rt03-closing-glow {
+  position:absolute;
+  border-radius:50%;
+  filter:blur(44px);
+  opacity:.5;
+  will-change:transform;
+  animation:rt03-glow-drift 18s ease-in-out infinite alternate;
+}
+.rt03-independence-theme .rt03-glow-one {
+  width:460px;
+  height:460px;
+  top:-310px;
+  right:3%;
+  background:rgba(255,255,255,.28);
+}
+.rt03-independence-theme .rt03-glow-two {
+  width:340px;
+  height:340px;
+  bottom:-230px;
+  left:29%;
+  background:rgba(255,172,166,.24);
+  animation-delay:-10s;
+}
+.rt03-independence-theme .rt03-closing-shimmer {
+  position:absolute;
+  inset:0;
+  opacity:.15;
+  background:repeating-linear-gradient(125deg,transparent 0 80px,rgba(255,255,255,.1) 81px 82px,transparent 83px 164px);
+}
+.rt03-independence-theme .rt03-closing-copy {
+  position:relative;
+  z-index:2;
+  max-width:760px;
+}
+.rt03-independence-theme .rt03-closing-copy .eyebrow {
+  color:#fff0eb;
+  font-size:11px;
+  letter-spacing:.17em;
+  display:inline-flex;
+  align-items:center;
+  gap:13px;
+}
+.rt03-independence-theme .rt03-flag-mark {
+  display:inline-block;
+  flex-shrink:0;
+  width:28px;
+  height:18px;
+  border-radius:2px;
+  background:linear-gradient(to bottom,#e13a46 0 50%,#fff 50% 100%);
+  border:1px solid rgba(255,255,255,.7);
+  box-shadow:0 2px 9px rgba(48,11,18,.2);
+}
+.rt03-independence-theme .rt03-closing-copy h2 {
+  margin:27px 0 18px;
+  max-width:800px;
+  font-size:clamp(39px,4.65vw,70px);
+  line-height:1.11;
+  font-weight:800;
+  letter-spacing:-.071em;
+  color:#fff;
+  text-wrap:balance;
+}
+.rt03-independence-theme .rt03-closing-copy h2 span {
+  color:#fff1f1;
+}
+.rt03-independence-theme .rt03-closing-copy p {
+  max-width:520px;
+  font-size:16px;
+  line-height:1.85;
+  margin:0;
+  color:#ffe8e6;
+}
+.rt03-independence-theme .rt03-closing-link {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  padding:13px 17px;
+  margin-top:27px;
+  border:1px solid rgba(255,255,255,.7);
+  border-radius:12px;
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  font-size:12px;
+  font-weight:800;
+  transition:background .25s ease,transform .25s ease,border-color .25s ease;
+}
+.rt03-independence-theme .rt03-closing-link:hover,
+.rt03-independence-theme .rt03-closing-link:focus-visible {
+  background:#fff;
+  border-color:#fff;
+  color:#9d1728;
+  transform:translateY(-2px);
+}
+.rt03-independence-theme .rt03-closing-link svg {
+  width:16px;
+  height:16px;
+}
+.rt03-independence-theme .rt03-closing-indonesia .closing-symbol {
+  position:absolute;
+  z-index:1;
+  right:clamp(-20px,3vw,52px);
+  top:50%;
+  transform:translateY(-50%) rotate(-7deg);
+  margin:0;
+  padding:0 22px 0 0;
+  display:block;
+  pointer-events:none;
+  white-space:nowrap;
+  font-family:var(--font-head);
+  font-size:clamp(165px,21vw,335px);
+  letter-spacing:-.17em;
+  font-weight:800;
+  line-height:1;
+  opacity:.27;
+  color:transparent;
+  background:linear-gradient(155deg,#fff 9%,#ffe7e6 41%,#fff 64%,#ffc8c6 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-stroke:1px rgba(255,255,255,.3);
+}
+.rt03-independence-theme .rt03-closing-indonesia .closing-symbol span {
+  color:#fff;
+  -webkit-text-fill-color:#fff;
+}
+.rt03-independence-theme .rt03-closing-signature {
+  position:absolute;
+  z-index:2;
+  right:min(7vw,118px);
+  bottom:24px;
+  color:#ffe9e8;
+  font-size:9px;
+  letter-spacing:.22em;
+  font-weight:800;
+}
+/* White editorial footer replaces the previous heavy navy wall. */
+.rt03-independence-theme .public-footer {
+  position:relative;
+  background:linear-gradient(140deg,#fff 0%,#fff7f4 100%);
+  color:#243247;
+  border-top:1px solid #f1d3cf;
+}
+.rt03-independence-theme .public-footer .brand--light .brand-text strong {
+  color:#a91d2b;
+}
+.rt03-independence-theme .public-footer .brand-text small {
+  color:#966c70;
+}
+.rt03-independence-theme .public-footer .footer-inner p {
+  color:#786f77;
+}
+.rt03-independence-theme .public-footer .footer-links a {
+  color:#59434b;
+  transition:color .2s ease;
+}
+.rt03-independence-theme .public-footer .footer-links a:hover {
+  color:#c32433;
+}
+.rt03-independence-theme .public-footer .footer-bottom {
+  border-top:1px solid #eedcd8;
+  color:#8e7476;
+}
+@keyframes rt03-red-flow {
+  0%,100% { background-position:0% 50%; }
+  50% { background-position:100% 50%; }
+}
+@keyframes rt03-light-sweep {
+  0% { background-position:125% 50%; }
+  100% { background-position:-95% 50%; }
+}
+@keyframes rt03-glow-drift {
+  0% { transform:translate3d(-14px,5px,0) scale(1); }
+  100% { transform:translate3d(30px,-20px,0) scale(1.09); }
+}
+@media(max-width:880px) {
+  .rt03-independence-theme .rt03-closing-indonesia {
+    min-height:395px;
+    padding:85px 6vw;
+  }
+  .rt03-independence-theme .rt03-closing-indonesia .closing-symbol {
+    right:-15px;
+    opacity:.18;
+    font-size:clamp(155px,27vw,260px);
+  }
+  .rt03-independence-theme .rt03-closing-copy {
+    max-width:580px;
+  }
+}
+@media(max-width:630px) {
+  .rt03-independence-theme .rt03-closing-indonesia {
+    min-height:420px;
+    padding:65px 23px 83px;
+    align-items:flex-start;
+  }
+  .rt03-independence-theme .rt03-closing-copy h2 {
+    font-size:clamp(35px,9vw,51px);
+    line-height:1.14;
+    margin:19px 0 14px;
+  }
+  .rt03-independence-theme .rt03-closing-copy p {
+    font-size:14px;
+    max-width:350px;
+  }
+  .rt03-independence-theme .rt03-closing-indonesia .closing-symbol {
+    display:block;
+    right:5px;
+    top:auto;
+    bottom:18px;
+    transform:rotate(-7deg);
+    font-size:clamp(132px,41vw,235px);
+    opacity:.16;
+  }
+  .rt03-independence-theme .rt03-closing-signature {
+    right:23px;
+    bottom:21px;
+    font-size:8px;
+  }
+  .rt03-independence-theme .public-footer {
+    padding-top:50px;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  .rt03-independence-theme .rt03-closing-indonesia,
+  .rt03-independence-theme .rt03-closing-indonesia::before,
+  .rt03-independence-theme .rt03-closing-glow {
+    animation:none !important;
+    will-change:auto;
+  }
+}

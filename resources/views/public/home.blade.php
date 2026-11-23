@@ -17,7 +17,7 @@
       <a href="{{ route('public.section', 'jadwal') }}" class="btn btn-red">Jelajahi jadwal <i data-lucide="arrow-up-right"></i></a>
       <a href="{{ route('public.section', 'lomba') }}" class="inline-link">Lihat perlombaan <i data-lucide="arrow-right"></i></a>
     </div>
-    <span class="rt03-hero-footnote">BERSAMA â€¢ BERGERAK â€¢ BERKARYA</span>
+    <span class="rt03-hero-footnote">BERSAMA · BERGERAK · BERKARYA</span>
   </div>
 </section>
 <section class="public-section intro-section"><div class="section-heading" data-reveal><span class="eyebrow">01 / APA YANG AKAN HADIR?</span><h2>Ruang untuk semua<br><span class="text-red">jadi bagian cerita.</span></h2></div><div class="feature-grid" data-stagger>
@@ -40,5 +40,23 @@
 </section>
 <section class="public-section two-column-section"><div class="section-heading" data-reveal><span class="eyebrow">02 / CATAT TANGGALNYA</span><h2>Jangan sampai<br>ketinggalan.</h2><p>Ikuti agenda yang telah dijadwalkan oleh panitia.</p><a class="inline-link" href="{{route('public.section','jadwal')}}">Semua jadwal <i data-lucide="arrow-right"></i></a></div><div class="agenda-list" data-stagger>@forelse($schedules as $schedule)<article class="agenda-row reveal-child"><div class="agenda-date"><strong>{{ $schedule->starts_at->format('d') }}</strong><span>{{ $schedule->starts_at->translatedFormat('M') }}</span></div><div class="agenda-content"><span class="eyebrow">{{strtoupper(str_replace('_',' ',$schedule->category))}}</span><h3>{{$schedule->title}}</h3><p>{{$schedule->location ?: 'Lokasi menyusul'}} · {{$schedule->starts_at->format('H:i')}} WIB</p></div><i data-lucide="arrow-up-right"></i></article>@empty<div class="empty-state">Jadwal resmi akan ditampilkan setelah ditetapkan panitia.</div>@endforelse</div></section>
 <section class="public-section notices-section"><div class="section-heading section-heading-row" data-reveal><div><span class="eyebrow">03 / INFORMASI PANITIA</span><h2>Kabar terbaru<span class="text-red">.</span></h2></div><a href="{{route('public.section','pengumuman')}}" class="inline-link">Semua pengumuman <i data-lucide="arrow-right"></i></a></div><div class="notice-cards" data-stagger>@forelse($announcements as $a)<article class="notice-tile reveal-child"><span class="notice-tag">{{strtoupper($a->category)}}</span><h3>{{$a->title}}</h3><p>{{\Illuminate\Support\Str::limit($a->content,140)}}</p><div class="notice-date">{{$a->published_at?->translatedFormat('d F Y')}}</div></article>@empty<article class="notice-tile notice-tile-placeholder"><span class="notice-tag">PAPAN INFORMASI</span><h3>Informasi akan hadir di sini.</h3><p>Panitia akan menampilkan pengumuman resmi setelah persiapan dimulai.</p></article>@endforelse</div></section>
-<section class="closing-band"><div data-reveal><span class="eyebrow">DARI KITA, UNTUK KITA</span><h2>Setiap generasi punya<br>ceritanya sendiri.</h2><p>Dan setiap cerita dimulai dengan langkah kecil bersama.</p></div><span class="closing-symbol" aria-hidden="true">03<span>.</span></span></section>
+
+<section class="closing-band rt03-closing-indonesia" aria-label="Semangat kebersamaan RT 03">
+  <div class="rt03-closing-atmosphere" aria-hidden="true">
+    <span class="rt03-closing-glow rt03-glow-one"></span>
+    <span class="rt03-closing-glow rt03-glow-two"></span>
+    <span class="rt03-closing-shimmer"></span>
+  </div>
+  <div class="rt03-closing-copy" data-reveal>
+    <span class="eyebrow"><span class="rt03-flag-mark" aria-hidden="true"></span> DARI KITA, UNTUK KITA</span>
+    <h2>Setiap generasi punya<br><span>ceritanya sendiri.</span></h2>
+    <p>Dan setiap cerita dimulai dengan langkah kecil bersama.</p>
+    <a class="rt03-closing-link" href="{{ route('public.section', 'jadwal') }}">
+      Lihat agenda warga <i data-lucide="arrow-up-right"></i>
+    </a>
+  </div>
+  <span class="closing-symbol" aria-hidden="true">03<span>.</span></span>
+  <span class="rt03-closing-signature" aria-hidden="true">MERDEKA · BERSAMA · RT 03</span>
+</section>
+
 @endsection
