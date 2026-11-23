@@ -31,7 +31,8 @@ final class Access
             'task-create' => $has([...$core,'koordinator']),
             'task-assignee-update' => $has([...$core,'sekretaris','bendahara','koordinator','anggota']),
             'task-update' => $has($core) || ($divisionId !== null && $memberships->contains(fn($m) => $m->division_id === $divisionId && $m->role === 'koordinator')),
-            'notes-create' => $has($core) || $ownDivision,
+            'notes-create' => $has($core) || $ownDivision || ($has(['sekretaris']) && $divisionId !== null
+                && \App\Models\Division::whereKey($divisionId)->where('event_period_id', $period->id)->where('slug', 'sekretariat')->exists()),
             'documents-manage' => $has([...$core,'sekretaris']),
             'finance-view' => $has([...$core,'bendahara']),
             'finance-manage' => $has(['bendahara']),

@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Announcement, Competition, CompetitionResult, EventPeriod, EventSchedule};
+use App\Models\{Announcement, Competition, CompetitionResult, EventSchedule};
+use App\Support\PublicPeriod;
 
 class PublicController extends Controller
 {
     private function current()
     {
-        return EventPeriod::where('status','active')->first() ?? EventPeriod::latest('year')->first();
+        return PublicPeriod::current();
     }
 
     public function home()

@@ -242,4 +242,131 @@ class PanitiaHubTest extends TestCase
         }
     }
 
+
+    public function test_secretary_can_write_secretariat_note_but_not_another_divisions_note(): void
+    {
+        $secretary=$this->member('sekretaris');
+        $secretariat=Division::where('slug','sekretariat')->firstOrFail();
+        $prizes=Division::where('slug','hadiah')->firstOrFail();
+        $this->actingAs($secretary)->post('/app/catatan',[
+            'division_id'=>$secretariat->id,'title'=>'Notulen rapat',
+            'content'=>'Agenda dan keputusan rapat lingkungan.',
+            'note_type'=>'decision',
+        ])->assertRedirect();
+        $this->assertDatabaseHas('division_notes',['title'=>'Notulen rapat','division_id'=>$secretariat->id]);
+        $this->actingAs($secretary)->post('/app/catatan',[
+            'division_id'=>$prizes->id,'title'=>'Catatan tanpa wewenang',
+            'content'=>'Tidak boleh disimpan.','note_type'=>'info',
+        ])->assertForbidden();
+        $this->assertDatabaseMissing('division_notes',['title'=>'Catatan tanpa wewenang']);
+    }
+
+    public function test_assigning_an_inactive_membership_again_reactivates_it(): void
+    {
+        $admin=User::create(['name'=>'Super Admin','email'=>'role-reassign@example.test',
+            'password'=>'testing-password-2027','is_active'=>true,'is_super_admin'=>true]);
+        $secretary=$this->member('sekretaris');
+        $membership=$secretary->memberships()->firstOrFail();
+        $membership->update(['is_active'=>false]);
+        $this->actingAs($admin)->post('/app/panitia/penugasan',[
+            'user_id'=>$secretary->id,'role'=>'sekretaris',
+        ])->assertRedirect();
+        $this->assertDatabaseHas('committee_members',['id'=>$membership->id,'is_active'=>1]);
+        $this->assertSame(1, CommitteeMember::where('user_id',$secretary->id)->where('role','sekretaris')->count());
+    }
+
+    public function test_archived_period_cannot_be_reactivated_and_draft_can(): void
+    {
+        $admin=User::create(['name'=>'Super Admin','email'=>'period-audit@example.test',
+            'password'=>'testing-password-2027','is_active'=>true,'is_super_admin'=>true]);
+        $archived=EventPeriod::create(['year'=>2026,'name'=>'Arsip 2026','status'=>'archived']);
+        $draft=EventPeriod::create(['year'=>2028,'name'=>'Rencana 2028','status'=>'draft']);
+        $this->actingAs($admin)->patch('/app/periode/'.$archived->id.'/aktifkan')->assertStatus(422);
+        $this->assertDatabaseHas('event_periods',['year'=>2027,'status'=>'active']);
+        $this->actingAs($admin)->patch('/app/periode/'.$draft->id.'/aktifkan')->assertRedirect();
+        $this->assertDatabaseHas('event_periods',['year'=>2028,'status'=>'active']);
+        $this->assertDatabaseHas('event_periods',['year'=>2027,'status'=>'archived']);
+    }
+
+    public function test_public_cannot_fetch_a_published_photo_from_an_archived_period(): void
+    {
+        Storage::fake('local');
+        $u=$this->member('koordinator','publikasi');
+        $older=EventPeriod::create(['year'=>2026,'name'=>'Lomba 2026','status'=>'archived']);
+        $path='private/gallery/'.$older->id.'/foto-lama.jpg';
+        Storage::disk('local')->put($path,'photo-placeholder');
+        $image=\App\Models\GalleryItem::create([
+            'event_period_id'=>$older->id,'uploaded_by'=>$u->id,
+            'title'=>'Foto Arsip','file_path'=>$path,'mime_type'=>'image/jpeg',
+            'consent_confirmed'=>true,'is_published'=>true,
+        ]);
+        $this->get('/foto/'.$image->id)->assertNotFound();
+        Storage::disk('local')->assertExists($path);
+    }
+
+    public function test_chair_cannot_assign_task_to_person_outside_task_division(): void
+    {
+        $chair=$this->member('ketua');
+        $other=$this->member('anggota','konsumsi');
+        $hadiah=Division::where('slug','hadiah')->firstOrFail();
+        $this->actingAs($chair)->post('/app/tugas',[
+            'title'=>'Tugas tidak cocok divisi',
+            'division_id'=>$hadiah->id,
+            'assigned_to'=>$other->id,
+            'priority'=>'medium',
+        ])->assertStatus(422);
+        $this->assertDatabaseMissing('tasks',['title'=>'Tugas tidak cocok divisi']);
+    }
+
+    public function test_testing_environment_refuses_to_use_file_based_database(): void
+    {
+        $original=config('database.connections.sqlite.database');
+        try {
+            config(['database.connections.sqlite.database'=>database_path('database.sqlite')]);
+            $this->expectException(\RuntimeException::class);
+            (new \App\Providers\AppServiceProvider(app()))->boot();
+        } finally {
+            config(['database.connections.sqlite.database'=>$original]);
+        }
+    }
+
+    public function test_draft_year_must_not_be_published_to_resident_portal(): void
+    {
+        $current=EventPeriod::where('status','active')->firstOrFail();
+        $current->update(['status'=>'archived']);
+        $draft=EventPeriod::create(['year'=>2028,'name'=>'Rencana Kemerdekaan 2028','status'=>'draft']);
+        Competition::create([
+            'event_period_id'=>$draft->id,'name'=>'Lomba Draf Rahasia',
+            'category'=>'Umum','is_published'=>true,
+        ]);
+        $this->get('/informasi/lomba')->assertOk()->assertDontSee('Lomba Draf Rahasia');
+    }
+
+    public function test_archives_list_does_not_include_future_drafts(): void
+    {
+        $admin=User::create(['name'=>'Super Admin','email'=>'archive-filter@example.test',
+            'password'=>'testing-password-2027','is_active'=>true,'is_super_admin'=>true]);
+        EventPeriod::create(['year'=>2026,'name'=>'Arsip Sah 2026','status'=>'archived']);
+        EventPeriod::create(['year'=>2028,'name'=>'Rancangan Rahasia 2028','status'=>'draft']);
+        $this->actingAs($admin)->get('/app/arsip')->assertOk()
+            ->assertSee('Arsip Sah 2026')
+            ->assertDontSee('Rancangan Rahasia 2028');
+    }
+
+    public function test_profile_does_not_show_revoked_role(): void
+    {
+        $staff=$this->member('sekretaris');
+        $period=EventPeriod::where('status','active')->firstOrFail();
+        CommitteeMember::create([
+            'user_id'=>$staff->id,'event_period_id'=>$period->id,
+            'division_id'=>Division::where('slug','hadiah')->firstOrFail()->id,
+            'role'=>'anggota','is_active'=>true,
+        ]);
+        $staff->memberships()->where('role','sekretaris')->update(['is_active'=>false]);
+        $this->actingAs($staff)->get('/app/profil')->assertOk()
+            ->assertViewHas('memberships', fn ($roles) => $roles->count() === 1
+                && $roles->first()->role === 'anggota'
+                && (int) $roles->first()->division_id === (int) Division::where('slug','hadiah')->value('id'))
+            ->assertSee('Hadiah');
+    }
 }
