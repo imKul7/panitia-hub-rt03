@@ -364,7 +364,9 @@ class PanitiaHubTest extends TestCase
         ]);
         $staff->memberships()->where('role','sekretaris')->update(['is_active'=>false]);
         $this->actingAs($staff)->get('/app/profil')->assertOk()
-            ->assertDontSee('Sekretaris')
+            ->assertViewHas('memberships', fn ($roles) => $roles->count() === 1
+                && $roles->first()->role === 'anggota'
+                && (int) $roles->first()->division_id === (int) Division::where('slug','hadiah')->value('id'))
             ->assertSee('Hadiah');
     }
 }
