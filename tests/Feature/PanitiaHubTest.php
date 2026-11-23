@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\{User,EventPeriod,Division,CommitteeMember,Competition,Participant,Announcement};
+use App\Models\{User,EventPeriod,Division,CommitteeMember,Competition,CompetitionRegistration,Participant,Announcement};
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -99,7 +99,7 @@ class PanitiaHubTest extends TestCase
     {
         $chair=$this->member('ketua');
         $this->actingAs($chair)->get('/app/periode')->assertForbidden();
-        $admin=User::create(['name'=>'Admin','email'=>'admin@example.test','password'=>'testing-password-2027','is_super_admin'=>true]);
+        $admin=User::create(['name'=>'Admin','email'=>'admin@example.test','password'=>'testing-password-2027','is_active'=>true,'is_super_admin'=>true]);
         $this->actingAs($admin)->get('/app/periode')->assertOk();
     }
 
@@ -128,7 +128,7 @@ class PanitiaHubTest extends TestCase
 
     public function test_period_scope_prevents_deleting_another_years_data(): void
     {
-        $admin = User::create(['name'=>'Admin','email'=>'superadmin-delete@example.test','password'=>'testing-password-2027','is_super_admin'=>true]);
+        $admin = User::create(['name'=>'Admin','email'=>'superadmin-delete@example.test','password'=>'testing-password-2027','is_active'=>true,'is_super_admin'=>true]);
         $old = EventPeriod::create(['year'=>2028,'name'=>'2028','status'=>'draft']);
         $schedule = \App\Models\EventSchedule::create(['event_period_id'=>$old->id,'created_by'=>$admin->id,'title'=>'Agenda 2028','starts_at'=>now()]);
         $this->actingAs($admin)->delete('/app/records/schedules/'.$schedule->id)->assertNotFound();
@@ -137,7 +137,7 @@ class PanitiaHubTest extends TestCase
 
     public function test_financial_transaction_has_no_delete_endpoint(): void
     {
-        $admin = User::create(['name'=>'Admin','email'=>'superadmin-audit@example.test','password'=>'testing-password-2027','is_super_admin'=>true]);
+        $admin = User::create(['name'=>'Admin','email'=>'superadmin-audit@example.test','password'=>'testing-password-2027','is_active'=>true,'is_super_admin'=>true]);
         $this->actingAs($admin)->delete('/app/records/transactions/1')->assertNotFound();
     }
 }
