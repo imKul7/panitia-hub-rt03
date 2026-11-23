@@ -419,3 +419,13 @@
   .rt03-neighborhood-v2 .neighborhood-media img { transition: none; }
 }
 /* END RT03-HERO-REDESIGN-V2 */
+
+/* Native, independent sidebar wheel scroll: keep Lenis on main content only. */
+.app-sidebar{height:100dvh;overflow:hidden}
+.app-sidebar .sidebar-nav{flex:1 1 auto;min-height:0;max-height:100%;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;touch-action:pan-y;scrollbar-gutter:stable;scroll-behavior:auto}
+.app-sidebar .sidebar-bottom{flex:0 0 auto;margin-top:12px}
+.btn-delete{border:1px solid #f1c9c9;color:#b4232c;background:#fff7f7;box-shadow:none;padding:7px 11px}
+.btn-delete:hover{color:#fff;background:#bb2431;border-color:#bb2431;transform:translateY(-1px)}
+.delete-form{display:inline-flex;margin:7px 0 0}
+.delete-form button svg{width:14px;height:14px}
+@media (prefers-reduced-motion:reduce){.btn-delete{transition:none}}

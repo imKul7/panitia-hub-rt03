@@ -102,4 +102,42 @@ class PanitiaHubTest extends TestCase
         $admin=User::create(['name'=>'Admin','email'=>'admin@example.test','password'=>'testing-password-2027','is_super_admin'=>true]);
         $this->actingAs($admin)->get('/app/periode')->assertOk();
     }
+
+    public function test_mentor_cannot_delete_competition(): void
+    {
+        $mentor = $this->member('mentor');
+        $period = EventPeriod::where('status','active')->firstOrFail();
+        $competition = Competition::create(['event_period_id'=>$period->id,'name'=>'Lomba Test','category'=>'Umum']);
+        $this->actingAs($mentor)->delete('/app/records/competitions/'.$competition->id)->assertForbidden();
+        $this->assertDatabaseHas('competitions',['id'=>$competition->id]);
+    }
+
+    public function test_coordinator_can_delete_empty_competition_but_not_one_with_registrations(): void
+    {
+        $coordinator = $this->member('koordinator','lomba');
+        $period = EventPeriod::where('status','active')->firstOrFail();
+        $empty = Competition::create(['event_period_id'=>$period->id,'name'=>'Kosong','category'=>'Umum']);
+        $this->actingAs($coordinator)->delete('/app/records/competitions/'.$empty->id)->assertRedirect();
+        $this->assertDatabaseMissing('competitions',['id'=>$empty->id]);
+        $filled = Competition::create(['event_period_id'=>$period->id,'name'=>'Berisi','category'=>'Umum']);
+        $participant = Participant::create(['event_period_id'=>$period->id,'created_by'=>$coordinator->id,'full_name'=>'Peserta 1']);
+        CompetitionRegistration::create(['competition_id'=>$filled->id,'participant_id'=>$participant->id,'registered_by'=>$coordinator->id,'registration_code'=>'RT03-TEST-DELETE','status'=>'confirmed']);
+        $this->actingAs($coordinator)->delete('/app/records/competitions/'.$filled->id)->assertStatus(422);
+        $this->assertDatabaseHas('competitions',['id'=>$filled->id]);
+    }
+
+    public function test_period_scope_prevents_deleting_another_years_data(): void
+    {
+        $admin = User::create(['name'=>'Admin','email'=>'superadmin-delete@example.test','password'=>'testing-password-2027','is_super_admin'=>true]);
+        $old = EventPeriod::create(['year'=>2028,'name'=>'2028','status'=>'draft']);
+        $schedule = \App\Models\EventSchedule::create(['event_period_id'=>$old->id,'created_by'=>$admin->id,'title'=>'Agenda 2028','starts_at'=>now()]);
+        $this->actingAs($admin)->delete('/app/records/schedules/'.$schedule->id)->assertNotFound();
+        $this->assertDatabaseHas('event_schedules',['id'=>$schedule->id]);
+    }
+
+    public function test_financial_transaction_has_no_delete_endpoint(): void
+    {
+        $admin = User::create(['name'=>'Admin','email'=>'superadmin-audit@example.test','password'=>'testing-password-2027','is_super_admin'=>true]);
+        $this->actingAs($admin)->delete('/app/records/transactions/1')->assertNotFound();
+    }
 }

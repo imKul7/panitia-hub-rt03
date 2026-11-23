@@ -18,7 +18,7 @@ activateIcons();
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 if (!reduceMotion && window.matchMedia('(pointer:fine)').matches) {
-  const lenis = new Lenis({ duration: 1.05, wheelMultiplier: 0.9, smoothWheel: true });
+  const lenis = new Lenis({ duration: 1.05, wheelMultiplier: 0.9, smoothWheel: true, prevent: node => node?.matches?.('.sidebar-nav') });
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add((time) => lenis.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);
