@@ -49,6 +49,7 @@
     {{-- Dialog konfirmasi terpusat: submit asli tetap melalui route, CSRF, dan policy Laravel. --}}
     <dialog class="rt03-confirm-dialog"
             data-rt03-confirm-dialog
+            data-lenis-prevent
             aria-labelledby="rt03-confirm-title"
             aria-describedby="rt03-confirm-message">
       <div class="rt03-confirm-shell">
