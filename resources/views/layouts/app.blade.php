@@ -45,4 +45,33 @@
     </main>
     <footer class="app-footer">PANITIA HUB RT 03 <span>•</span> Dikelola bersama, diteruskan bersama.</footer>
   </div>
+
+    {{-- Dialog konfirmasi terpusat: submit asli tetap melalui route, CSRF, dan policy Laravel. --}}
+    <dialog class="rt03-confirm-dialog"
+            data-rt03-confirm-dialog
+            data-lenis-prevent
+            aria-labelledby="rt03-confirm-title"
+            aria-describedby="rt03-confirm-message">
+      <div class="rt03-confirm-shell">
+        <div class="rt03-confirm-heading">
+          <span class="rt03-confirm-overline">PANITIA HUB <span aria-hidden="true">/</span> KONFIRMASI</span>
+          <button type="button" class="rt03-confirm-close" data-rt03-confirm-cancel aria-label="Tutup konfirmasi">
+            <i data-lucide="x" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="rt03-confirm-emblem" aria-hidden="true">
+          <i data-lucide="shield-alert"></i>
+        </div>
+        <h2 id="rt03-confirm-title" data-rt03-confirm-title>Konfirmasi tindakan</h2>
+        <p id="rt03-confirm-message" data-rt03-confirm-message>Periksa kembali tindakan yang akan dijalankan.</p>
+        <div class="rt03-confirm-advice">
+          <i data-lucide="info" aria-hidden="true"></i>
+          <span>Tindakan akan diperiksa kembali oleh sistem sesuai izin akun dan periode.</span>
+        </div>
+        <div class="rt03-confirm-actions">
+          <button type="button" class="rt03-confirm-button rt03-confirm-button--cancel" data-rt03-confirm-cancel>Batal</button>
+          <button type="button" class="rt03-confirm-button rt03-confirm-button--proceed" data-rt03-confirm-proceed>Konfirmasi</button>
+        </div>
+      </div>
+    </dialog>
 </body></html>
