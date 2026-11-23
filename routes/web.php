@@ -16,6 +16,7 @@ Route::post('/logout',[AuthController::class,'logout'])->middleware('auth')->nam
 
 Route::middleware('auth')->prefix('app')->group(function() {
     Route::get('/', DashboardController::class)->name('dashboard');
+    Route::delete('/records/{resource}/{id}', \App\Http\Controllers\RecordDeletionController::class)->whereNumber('id')->name('records.destroy');
     Route::get('/profil',[ProfileController::class,'index'])->name('profile.index');
     Route::patch('/profil',[ProfileController::class,'update'])->name('profile.update');
     Route::patch('/profil/password',[ProfileController::class,'changePassword'])->name('profile.password');
