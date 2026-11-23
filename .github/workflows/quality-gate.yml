@@ -1,0 +1,44 @@
+name: PanitiaHub Quality Gate
+
+on:
+  push:
+    branches:
+      - fix/audit-integritas-alur-rt03
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  laravel-and-frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: PHP 8.2 and SQLite extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_sqlite, sqlite3, fileinfo
+          coverage: none
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+      - name: Create temporary environment (CI only)
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+      - name: Check database isolation
+        run: |
+          php -r '$x=file_get_contents("phpunit.xml"); foreach(["DB_CONNECTION", "DB_DATABASE", "DB_URL"] as $name) { if (!preg_match("/<env name=\"".preg_quote($name,"/")."\"[^>]*force=\"true\"/", $x)) { fwrite(STDERR,"Unsafe phpunit.xml: ".$name."\n"); exit(1); }}'
+      - name: Laravel feature and unit tests (SQLite in-memory)
+        run: php artisan test
+      - name: Frontend dependencies
+        run: npm ci
+      - name: Vite production build
+        run: npm run build
