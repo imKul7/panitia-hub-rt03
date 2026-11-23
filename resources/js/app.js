@@ -81,7 +81,7 @@ if (slides.length > 1 && !reduceMotion) {
     slides[current].classList.remove('active');
     current = (current + 1) % slides.length;
     slides[current].classList.add('active');
-  }, 6500);
+  }, 5000);
 }
 
 // Mobile navigation.
