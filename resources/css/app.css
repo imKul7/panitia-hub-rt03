@@ -956,3 +956,19 @@
   }
 }
 /* END RT03-HERO-CELEBRATION-V3 */
+
+
+/* Scoped, accessible delete controls (public landing styles remain untouched). */
+.app-body .delete-form { display:inline-flex; margin:9px 0 0; }
+.app-body .btn-delete { border:1px solid #eac3c8; color:#aa2031; background:#fff4f4; padding:8px 11px; box-shadow:none; font-size:11px; gap:6px; min-height:34px; border-radius:10px; }
+.app-body .btn-delete svg { width:14px;height:14px; }
+.app-body .btn-delete:hover { color:#fff; background:#b91d2d; border-color:#b91d2d; }
+.app-body .btn-delete:focus-visible { outline:3px solid #c52b40; outline-offset:3px; }
+.app-body .gallery-card .delete-form { display:flex; justify-content:flex-end; margin:0; padding:0 16px 16px; }
+.app-body .gallery-card .gallery-label { padding-bottom:12px; }
+.app-body .person-card { flex-wrap:wrap; }
+.app-body .person-card .delete-form { margin-left:auto; }
+.app-sidebar{height:100dvh;overflow:hidden}
+.app-sidebar .sidebar-nav{flex:1 1 auto;min-height:0;max-height:100%;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;touch-action:pan-y;scrollbar-gutter:stable;scroll-behavior:auto}
+.app-sidebar .sidebar-bottom{flex:0 0 auto;margin-top:12px}
+@media(prefers-reduced-motion:reduce){.app-body .btn-delete{transition:none}}
