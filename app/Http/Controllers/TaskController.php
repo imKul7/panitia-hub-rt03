@@ -34,9 +34,14 @@ class TaskController extends Controller
         if (!Access::can($user,'task-update') && !Access::can($user,'task-update',($data['division_id']??null))) {
             abort(403,'Koordinator hanya boleh membuat tugas untuk divisinya.');
         }
-        if (!empty($data['assigned_to']) && !auth()->user()->is_super_admin && !Access::can($user,'manage-members')) {
-            $member=CommitteeMember::where('event_period_id',$period->id)->where('user_id',$data['assigned_to'])->where('division_id',$data['division_id']??null)->where('is_active',true)->exists();
-            abort_unless($member,403,'Penanggung jawab harus menjadi anggota divisi ini.');
+        if (!empty($data['assigned_to'])) {
+            $assigneeMembership=CommitteeMember::where('event_period_id',$period->id)
+                ->where('user_id',$data['assigned_to'])->where('is_active',true);
+            // A task with a division cannot be assigned outside that division.
+            if (!empty($data['division_id'])) {
+                $assigneeMembership->where('division_id',$data['division_id']);
+            }
+            abort_unless($assigneeMembership->exists(), 422, 'Penanggung jawab tidak memiliki penugasan aktif pada divisi tugas.');
         }
         $task=Task::create([...$data,'event_period_id'=>$period->id,'created_by'=>$user->id,'status'=>'todo']);
         Workspace::log('task.created','Tugas baru: '.$task->title,$task->id,'task');

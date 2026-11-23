@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{GalleryItem,EventPeriod};
+use App\Models\GalleryItem;
+use App\Support\PublicPeriod;
 use App\Support\{Access,Workspace};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -39,6 +40,8 @@ class GalleryController extends Controller
 
     public function photo(GalleryItem $item)
     {
+        $period = PublicPeriod::current();
+        abort_unless($period && $item->event_period_id === $period->id, 404);
         abort_unless($item->is_published && $item->consent_confirmed,404);
         abort_unless(Storage::disk('local')->exists($item->file_path),404);
         return Storage::disk('local')->response($item->file_path,'foto-rt03-'.$item->id, ['Content-Type'=>$item->mime_type, 'X-Content-Type-Options'=>'nosniff']);
