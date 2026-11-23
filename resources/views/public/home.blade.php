@@ -10,6 +10,11 @@
     <div class="rt03-hero-caption"><span>RT 03 / DOKUMENTASI KEGIATAN</span><span>INDONESIA MERDEKA</span></div>
   </div>
   <div class="hero-copy rt03-hero-copy">
+    <div class="rt03-hero-lightfield" aria-hidden="true">
+      <span class="rt03-aurora rt03-aurora-red"></span>
+      <span class="rt03-aurora rt03-aurora-coral"></span>
+      <span class="rt03-aurora rt03-aurora-gold"></span>
+    </div>
     <span class="eyebrow public-eyebrow"><span class="eyebrow-line"></span> MERAYAKAN KEBERSAMAAN / {{ $period?->year ?? '2027' }}</span>
     <h1 data-word-reveal>Semangat yang<br>menyatukan <em>kita.</em></h1>
     <p>Bukan sekadar perayaan 17 Agustus. Ini cerita tentang lingkungan, kebersamaan, dan generasi yang saling mendukung.</p>

@@ -777,3 +777,181 @@
     will-change:auto;
   }
 }
+
+
+/* RT03-HERO-CELEBRATION-V3 — visible from first viewport, no extra assets. */
+.rt03-independence-theme .rt03-hero-v2 .rt03-hero-copy {
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:linear-gradient(115deg,#fff8f4 0%,#ffd9ca 22%,#ffe9d5 38%,#fff6ef 56%,#ffd0cb 76%,#fff4ef 100%);
+  background-size:260% 260%;
+  animation:rt03-hero-color-journey 11s ease-in-out infinite alternate;
+}
+/* A moving multicolor red-coral-gold stripe is deliberately easy to see. */
+.rt03-independence-theme .rt03-hero-v2 .rt03-hero-copy::before {
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;
+  height:7px;
+  z-index:5;
+  pointer-events:none;
+  background:linear-gradient(90deg,#9e1728 0%,#ee3445 20%,#ff8d57 40%,#ffcb6a 57%,#fff4db 68%,#e52a3b 86%,#a6162b 100%);
+  background-size:270% 100%;
+  animation:rt03-hero-ribbon-flow 4.8s linear infinite;
+  box-shadow:0 3px 14px rgba(215,48,55,.34);
+}
+.rt03-independence-theme .rt03-hero-v2 .rt03-hero-lightfield {
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:0;
+}
+/* Colored light sweeps across the text panel without masking content. */
+.rt03-independence-theme .rt03-hero-v2 .rt03-hero-lightfield::before {
+  content:"";
+  position:absolute;
+  inset:-20%;
+  background:conic-gradient(from 15deg at 70% 45%,transparent 0deg,rgba(247,58,75,.22) 55deg,rgba(255,180,71,.30) 110deg,transparent 176deg,rgba(255,96,87,.18) 242deg,transparent 320deg);
+  filter:blur(38px);
+  transform-origin:center;
+  animation:rt03-hero-light-turn 22s linear infinite;
+}
+.rt03-independence-theme .rt03-hero-v2 .rt03-hero-lightfield::after {
+  content:"";
+  position:absolute;
+  inset:-15% auto -15% -55%;
+  width:60%;
+  transform:skewX(-20deg);
+  background:linear-gradient(90deg,transparent,rgba(255,252,241,.04) 12%,rgba(255,177,93,.39) 45%,rgba(255,255,255,.34) 51%,rgba(255,125,111,.22) 65%,transparent);
+  filter:blur(20px);
+  animation:rt03-hero-spotlight-sweep 7.2s ease-in-out infinite;
+}
+.rt03-independence-theme .rt03-hero-v2 .rt03-aurora {
+  position:absolute;
+  display:block;
+  width:clamp(190px,25vw,420px);
+  aspect-ratio:1;
+  border-radius:50%;
+  filter:blur(47px);
+  opacity:.6;
+  mix-blend-mode:multiply;
+  animation:rt03-aurora-float 9s ease-in-out infinite alternate;
+}
+.rt03-independence-theme .rt03-hero-v2 .rt03-aurora-red {
+  top:-18%;right:-18%;
+  background:radial-gradient(circle,rgba(242,38,56,.8) 0%,rgba(243,78,86,.42) 35%,transparent 72%);
+}
+.rt03-independence-theme .rt03-hero-v2 .rt03-aurora-coral {
+  bottom:-30%;left:-22%;
+  background:radial-gradient(circle,rgba(251,92,76,.65) 0%,rgba(255,136,98,.4) 34%,transparent 72%);
+  animation-delay:-4s;
+  animation-duration:11s;
+}
+.rt03-independence-theme .rt03-hero-v2 .rt03-aurora-gold {
+  top:33%;right:15%;
+  width:clamp(170px,18vw,285px);
+  background:radial-gradient(circle,rgba(255,190,83,.8) 0%,rgba(255,211,132,.3) 38%,transparent 71%);
+  animation-delay:-6s;
+  animation-duration:13s;
+}
+.rt03-independence-theme .rt03-hero-v2 .rt03-hero-copy > :not(.rt03-hero-lightfield) {
+  position:relative;
+  z-index:2;
+}
+.rt03-independence-theme .rt03-hero-v2 .rt03-hero-copy h1,
+.rt03-independence-theme .rt03-hero-v2 .rt03-hero-copy p {
+  text-shadow:0 1px 0 rgba(255,255,255,.34);
+}
+.rt03-independence-theme .rt03-hero-v2 .rt03-hero-copy h1 em {
+  background:linear-gradient(95deg,#b1192c 5%,#e4303f 33%,#ef773f 58%,#bd152a 88%);
+  background-size:240% 100%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  -webkit-text-fill-color:transparent;
+  animation:rt03-hero-accent-shift 6s linear infinite;
+}
+.rt03-independence-theme .rt03-hero-v2 .hero-actions .btn-red {
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(110deg,#b91b30 5%,#e42e42 35%,#d12235 65%,#a91a2d 95%);
+  background-size:230% 100%;
+  animation:rt03-hero-button-flow 7s ease-in-out infinite alternate;
+  box-shadow:0 10px 30px rgba(197,35,51,.26);
+}
+.rt03-independence-theme .rt03-hero-v2 .hero-actions .btn-red:hover {
+  box-shadow:0 14px 30px rgba(197,35,51,.35);
+}
+.rt03-independence-theme .rt03-hero-v2 .rt03-hero-shade {
+  background:linear-gradient(180deg,rgba(134,22,39,.06) 0%,rgba(89,12,26,.03) 50%,rgba(65,13,30,.48) 100%);
+}
+.rt03-independence-theme .rt03-hero-v2 .hero-visual::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:linear-gradient(105deg,transparent 20%,rgba(255,196,111,.07) 43%,rgba(255,245,220,.23) 49%,rgba(255,128,100,.10) 55%,transparent 72%);
+  background-size:260% 100%;
+  animation:rt03-photo-sunlight 10s ease-in-out infinite;
+}
+.rt03-independence-theme .rt03-hero-v2 .rt03-hero-mark {
+  background:linear-gradient(115deg,#a7172c,#ec4050,#ef8450,#bd1b32);
+  background-size:260% 100%;
+  animation:rt03-hero-button-flow 6s linear infinite alternate;
+  border-color:rgba(255,255,255,.65);
+  box-shadow:0 12px 30px rgba(115,17,34,.24);
+}
+@keyframes rt03-hero-color-journey {
+  0% {background-position:0% 30%}
+  100% {background-position:100% 70%}
+}
+@keyframes rt03-hero-ribbon-flow {
+  0% {background-position:0% 50%}
+  100% {background-position:100% 50%}
+}
+@keyframes rt03-hero-light-turn {
+  from {transform:rotate(0deg) scale(1.03)}
+  to {transform:rotate(360deg) scale(1.03)}
+}
+@keyframes rt03-hero-spotlight-sweep {
+  0% {left:-80%}
+  55%,100% {left:130%}
+}
+@keyframes rt03-aurora-float {
+  0% {transform:translate3d(-18px,0,0) scale(.9)}
+  100% {transform:translate3d(60px,34px,0) scale(1.18)}
+}
+@keyframes rt03-hero-accent-shift {
+  from {background-position:0% 50%}
+  to {background-position:100% 50%}
+}
+@keyframes rt03-hero-button-flow {
+  0% {background-position:0% 50%}
+  100% {background-position:100% 50%}
+}
+@keyframes rt03-photo-sunlight {
+  0%,15% {background-position:100% 50%}
+  65%,100% {background-position:0% 50%}
+}
+@media(max-width:880px) {
+  .rt03-independence-theme .rt03-hero-v2 .rt03-hero-copy::before {height:5px}
+  .rt03-independence-theme .rt03-hero-v2 .rt03-aurora {opacity:.47;filter:blur(42px)}
+  .rt03-independence-theme .rt03-hero-v2 .rt03-hero-lightfield::before {opacity:.74}
+}
+@media(prefers-reduced-motion:reduce) {
+  .rt03-independence-theme .rt03-hero-v2 .rt03-hero-copy,
+  .rt03-independence-theme .rt03-hero-v2 .rt03-hero-copy::before,
+  .rt03-independence-theme .rt03-hero-v2 .rt03-hero-lightfield::before,
+  .rt03-independence-theme .rt03-hero-v2 .rt03-hero-lightfield::after,
+  .rt03-independence-theme .rt03-hero-v2 .rt03-aurora,
+  .rt03-independence-theme .rt03-hero-v2 .rt03-hero-copy h1 em,
+  .rt03-independence-theme .rt03-hero-v2 .hero-actions .btn-red,
+  .rt03-independence-theme .rt03-hero-v2 .hero-visual::after,
+  .rt03-independence-theme .rt03-hero-v2 .rt03-hero-mark {
+    animation:none !important;
+  }
+}
+/* END RT03-HERO-CELEBRATION-V3 */
