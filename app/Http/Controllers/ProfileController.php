@@ -11,7 +11,7 @@ class ProfileController extends Controller
     {
         Access::ensure('view');
         $period=Workspace::period();
-        $memberships=auth()->user()->memberships()->with('division')->where('event_period_id',$period->id)->get();
+        $memberships=auth()->user()->memberships()->with('division')->where('event_period_id',$period->id)->where('is_active',true)->get();
         return view('panitia.profile',compact('period','memberships'));
     }
 

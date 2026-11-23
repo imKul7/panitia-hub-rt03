@@ -7,12 +7,11 @@ use App\Models\EventPeriod;
 final class PublicPeriod
 {
     /**
-     * Show the live year, or a draft if a future year has not started yet.
-     * Archived periods are never re-exposed by public fallback navigation.
+     * Only the active year is publicly visible.
+     * Drafts and archives remain internal until an explicit period activation.
      */
     public static function current(): ?EventPeriod
     {
-        return EventPeriod::where('status', 'active')->first()
-            ?? EventPeriod::where('status', 'draft')->orderByDesc('year')->first();
+        return EventPeriod::where('status', 'active')->first();
     }
 }

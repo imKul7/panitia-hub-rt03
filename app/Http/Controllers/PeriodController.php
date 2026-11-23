@@ -55,7 +55,7 @@ class PeriodController extends Controller
     public function archive()
     {
         Access::ensure('view');
-        $periods=EventPeriod::orderByDesc('year')->get();
+        $periods=EventPeriod::where('status', 'archived')->orderByDesc('year')->get();
         $summaries=$periods->map(function($p) {
             return [
                 'period'=>$p,

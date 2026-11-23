@@ -329,4 +329,42 @@ class PanitiaHubTest extends TestCase
             config(['database.connections.sqlite.database'=>$original]);
         }
     }
+
+    public function test_draft_year_must_not_be_published_to_resident_portal(): void
+    {
+        $current=EventPeriod::where('status','active')->firstOrFail();
+        $current->update(['status'=>'archived']);
+        $draft=EventPeriod::create(['year'=>2028,'name'=>'Rencana Kemerdekaan 2028','status'=>'draft']);
+        Competition::create([
+            'event_period_id'=>$draft->id,'name'=>'Lomba Draf Rahasia',
+            'category'=>'Umum','is_published'=>true,
+        ]);
+        $this->get('/informasi/lomba')->assertOk()->assertDontSee('Lomba Draf Rahasia');
+    }
+
+    public function test_archives_list_does_not_include_future_drafts(): void
+    {
+        $admin=User::create(['name'=>'Super Admin','email'=>'archive-filter@example.test',
+            'password'=>'testing-password-2027','is_active'=>true,'is_super_admin'=>true]);
+        EventPeriod::create(['year'=>2026,'name'=>'Arsip Sah 2026','status'=>'archived']);
+        EventPeriod::create(['year'=>2028,'name'=>'Rancangan Rahasia 2028','status'=>'draft']);
+        $this->actingAs($admin)->get('/app/arsip')->assertOk()
+            ->assertSee('Arsip Sah 2026')
+            ->assertDontSee('Rancangan Rahasia 2028');
+    }
+
+    public function test_profile_does_not_show_revoked_role(): void
+    {
+        $staff=$this->member('sekretaris');
+        $period=EventPeriod::where('status','active')->firstOrFail();
+        CommitteeMember::create([
+            'user_id'=>$staff->id,'event_period_id'=>$period->id,
+            'division_id'=>Division::where('slug','hadiah')->firstOrFail()->id,
+            'role'=>'anggota','is_active'=>true,
+        ]);
+        $staff->memberships()->where('role','sekretaris')->update(['is_active'=>false]);
+        $this->actingAs($staff)->get('/app/profil')->assertOk()
+            ->assertDontSee('Sekretaris')
+            ->assertSee('Hadiah');
+    }
 }
