@@ -117,3 +117,52 @@ if (!reduceMotion) {
     });
   });
 }
+
+
+// PANITIA HUB: local-only preview of selected avatar. Upload still requires
+// an explicit save and server-side validation; private photo routes stay auth-only.
+const profilePhotoPicker = document.querySelector('[data-profile-photo-input]');
+const profilePhotoPreview = document.querySelector('[data-profile-photo-preview]');
+const profilePhotoName = document.querySelector('[data-profile-photo-name]');
+let avatarObjectUrl = null;
+
+profilePhotoPicker?.addEventListener('change', () => {
+  if (avatarObjectUrl) {
+    URL.revokeObjectURL(avatarObjectUrl);
+    avatarObjectUrl = null;
+  }
+  profilePhotoPicker.setCustomValidity('');
+  const photo = profilePhotoPicker.files?.[0];
+  if (!photo) return;
+
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(photo.type)
+      || photo.size > 2 * 1024 * 1024) {
+    profilePhotoPicker.setCustomValidity('Gunakan JPG, PNG atau WebP maksimal 2 MB.');
+    profilePhotoPicker.reportValidity();
+    profilePhotoPicker.value = '';
+    return;
+  }
+
+  avatarObjectUrl = URL.createObjectURL(photo);
+  if (profilePhotoPreview) {
+    profilePhotoPreview.src = avatarObjectUrl;
+    profilePhotoPreview.hidden = false;
+  }
+  if (profilePhotoName) profilePhotoName.textContent = photo.name;
+});
+
+window.addEventListener('pagehide', () => {
+  if (avatarObjectUrl) URL.revokeObjectURL(avatarObjectUrl);
+}, { once: true });
+
+// Password visibility is strictly local UI state; never persisted or logged.
+document.querySelectorAll('[data-toggle-password]').forEach(button => {
+  button.addEventListener('click', () => {
+    const input = button.parentElement?.querySelector('input');
+    if (!input) return;
+    const reveal = input.type === 'password';
+    input.type = reveal ? 'text' : 'password';
+    button.setAttribute('aria-pressed', String(reveal));
+    button.setAttribute('aria-label', reveal ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi');
+  });
+});
