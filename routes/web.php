@@ -20,6 +20,9 @@ Route::middleware('auth')->prefix('app')->group(function() {
     Route::get('/profil',[ProfileController::class,'index'])->name('profile.index');
     Route::patch('/profil',[ProfileController::class,'update'])->name('profile.update');
     Route::patch('/profil/password',[ProfileController::class,'changePassword'])->name('profile.password');
+    Route::get('/profil/foto',[ProfileController::class,'photo'])->name('profile.photo');
+    Route::post('/profil/foto',[ProfileController::class,'storePhoto'])->middleware('throttle:12,1')->name('profile.photo.store');
+    Route::delete('/profil/foto',[ProfileController::class,'deletePhoto'])->name('profile.photo.destroy');
     Route::get('/panitia',[PeopleController::class,'index'])->name('people.index');
     Route::post('/panitia',[PeopleController::class,'store'])->name('people.store');
     Route::post('/panitia/penugasan',[PeopleController::class,'assign'])->name('people.assign');
