@@ -166,3 +166,81 @@ document.querySelectorAll('[data-toggle-password]').forEach(button => {
     button.setAttribute('aria-label', reveal ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi');
   });
 });
+
+
+// One branded, accessible confirmation dialog for all committee actions.
+// No native window.confirm/alert/prompt, no direct form.submit() bypass, no
+// dependency on specific controller routes: Laravel enforces permissions.
+const rt03ConfirmDialog = document.querySelector('[data-rt03-confirm-dialog]');
+if (rt03ConfirmDialog && typeof rt03ConfirmDialog.showModal === 'function') {
+  const rt03ConfirmTitle = rt03ConfirmDialog.querySelector('[data-rt03-confirm-title]');
+  const rt03ConfirmMessage = rt03ConfirmDialog.querySelector('[data-rt03-confirm-message]');
+  const rt03ConfirmProceed = rt03ConfirmDialog.querySelector('[data-rt03-confirm-proceed]');
+  const rt03ConfirmCancel = rt03ConfirmDialog.querySelector('.rt03-confirm-button--cancel');
+  let rt03PendingSubmission = null;
+  let rt03ApprovedForm = null;
+  let rt03ReturnFocus = null;
+
+  // Fail closed: destructive/period actions stay disabled when JS or dialog
+  // cannot initialize. No accidental direct submit without confirmation.
+  document.querySelectorAll('form[data-rt03-confirm] button[type="submit"]').forEach(button => {
+    button.disabled = false;
+  });
+
+  document.addEventListener('submit', event => {
+    const form = event.target;
+    if (!(form instanceof HTMLFormElement) || !form.matches('[data-rt03-confirm]')) return;
+    if (rt03ApprovedForm === form) return;
+    event.preventDefault();
+    if (rt03ConfirmDialog.open) return;
+
+    const submitter = event.submitter;
+    rt03PendingSubmission = {
+      form,
+      submitter: submitter?.form === form ? submitter : null,
+    };
+    rt03ReturnFocus = submitter?.form === form ? submitter : document.activeElement;
+    rt03ConfirmTitle.textContent = form.dataset.confirmTitle || 'Konfirmasi tindakan';
+    rt03ConfirmMessage.textContent = form.dataset.confirmMessage || 'Lanjutkan tindakan ini?';
+    rt03ConfirmProceed.textContent = form.dataset.confirmAction || 'Lanjutkan';
+    rt03ConfirmDialog.dataset.variant = form.dataset.confirmVariant === 'warning' ? 'warning' : 'danger';
+    rt03ConfirmDialog.showModal();
+    rt03ConfirmCancel?.focus({ preventScroll: true });
+  });
+
+  rt03ConfirmDialog.querySelectorAll('[data-rt03-confirm-cancel]').forEach(button => {
+    button.addEventListener('click', () => rt03ConfirmDialog.close('cancel'));
+  });
+
+  rt03ConfirmDialog.addEventListener('click', event => {
+    if (event.target !== rt03ConfirmDialog) return;
+    const box = rt03ConfirmDialog.getBoundingClientRect();
+    if (event.clientX < box.left || event.clientX > box.right
+        || event.clientY < box.top || event.clientY > box.bottom) {
+      rt03ConfirmDialog.close('cancel');
+    }
+  });
+
+  rt03ConfirmDialog.addEventListener('close', () => {
+    rt03PendingSubmission = null;
+    if (rt03ReturnFocus?.isConnected) rt03ReturnFocus.focus({ preventScroll: true });
+    rt03ReturnFocus = null;
+  });
+
+  rt03ConfirmProceed?.addEventListener('click', () => {
+    if (!rt03PendingSubmission) return;
+    const { form, submitter } = rt03PendingSubmission;
+    rt03PendingSubmission = null;
+    rt03ConfirmDialog.close('confirm');
+
+    // Re-trigger native HTML validation and the actual submit event, while
+    // bypassing only this one confirmation. CSRF/method inputs are retained.
+    rt03ApprovedForm = form;
+    try {
+      if (submitter && !submitter.disabled) form.requestSubmit(submitter);
+      else form.requestSubmit();
+    } finally {
+      rt03ApprovedForm = null;
+    }
+  });
+}

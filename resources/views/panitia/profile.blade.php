@@ -148,10 +148,10 @@
                     </form>
                     @if($user->avatar_path)
                         <form method="post" action="{{ route('profile.photo.destroy') }}" class="rt03-profile-remove-form"
-                              onsubmit="return confirm('Hapus foto profil dan kembali ke inisial nama?')">
+                              data-rt03-confirm data-confirm-title="Hapus foto profil?" data-confirm-message="Foto akun akan dihapus dan avatar kembali menjadi inisial nama. Informasi profil lainnya tidak berubah." data-confirm-action="Hapus foto" data-confirm-variant="danger">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="rt03-profile-remove-button">
+                            <button type="submit" class="rt03-profile-remove-button" disabled>
                                 <i data-lucide="trash-2" aria-hidden="true"></i> Hapus foto
                             </button>
                         </form>
