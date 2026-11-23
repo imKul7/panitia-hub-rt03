@@ -27,6 +27,8 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - name: Create Laravel runtime directories
+        run: mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs storage/app/private storage/app/public
       - name: Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
       - name: Create temporary environment (CI only)
