@@ -226,4 +226,20 @@ class PanitiaHubTest extends TestCase
         $this->actingAs($coordinator)->delete('/app/records/registrations/'.$two->id)->assertRedirect();
         $this->assertDatabaseMissing('participants',['id'=>$participant->id]);
     }
+
+    public function test_every_public_navigation_page_uses_indonesian_theme(): void
+    {
+        foreach ([
+            '/', '/informasi/lomba', '/informasi/jadwal',
+            '/informasi/pengumuman', '/informasi/hasil', '/galeri',
+        ] as $path) {
+            $response = $this->get($path)->assertOk()
+                ->assertSee('rt03-independence-theme')
+                ->assertSee('@view-transition { navigation: auto; }', false);
+            if ($path !== '/') {
+                $response->assertSee('rt03-listing-hero');
+            }
+        }
+    }
+
 }

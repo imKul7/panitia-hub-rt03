@@ -7,8 +7,10 @@
   <meta name="theme-color" content="#f8f6f3"><meta name="description" content="Informasi kegiatan kemerdekaan RT 03: jadwal, lomba, pengumuman, dan hasil resmi panitia.">
   <title>@yield('title','Beranda') · PANITIA HUB RT 03</title>
   @vite(['resources/css/app.css','resources/js/app.js'])
+  {{-- Browser-native same-origin public-page transitions. Login/workspace do not opt in. --}}
+  <style>@view-transition { navigation: auto; }</style>
 </head>
-<body class="public-body {{ request()->routeIs('public.home') ? 'rt03-independence-theme' : '' }}">
+<body class="public-body rt03-independence-theme {{ request()->routeIs('public.home') ? 'rt03-public-home' : 'rt03-public-inner' }}">
   <div class="public-topline"><span>WARGA RT 03</span><span>BERSAMA • BERGERAK • BERKARYA</span></div>
   <header class="public-header">
     <a class="brand" href="{{ route('public.home') }}" aria-label="PANITIA HUB RT 03, beranda">
