@@ -17,7 +17,7 @@ use App\Models\User;
 final class RoleMenu
 {
     private const ITEMS = [
-        'dashboard' => ['Dashboard', 'layout-dashboard', 'Ringkasan kegiatan'],
+        'dashboard' => ['Dashboard', 'dashboard', 'Ringkasan kegiatan'],
         'people.index' => ['Struktur Panitia', 'users', 'Tim & jabatan'],
         'tasks.index' => ['Tugas & Progres', 'check-square', 'Kerjakan & pantau tugas'],
         'notes.index' => ['Catatan Divisi', 'notebook', 'Catatan kerja'],
@@ -31,11 +31,11 @@ final class RoleMenu
         'gallery.index' => ['Galeri Foto', 'images', 'Dokumentasi'],
         'documents.index' => ['Sekretariat', 'folder', 'Surat & dokumen'],
         'guides.index' => ['Panduan & SOP', 'book', 'Panduan kerja'],
-        'mentor.index' => ['Ruang Mentor', 'message-square', 'Masukan senior'],
+        'mentor.index' => ['Ruang Mentor', 'message', 'Masukan senior'],
         'archive.index' => ['Arsip Tahunan', 'archive', 'Riwayat kegiatan'],
         'expenses.index' => ['Pengajuan Dana', 'receipt', 'Permintaan anggaran'],
         'finance.index' => ['Keuangan', 'wallet', 'Transaksi & saldo'],
-        'periods.index' => ['Kelola Periode', 'calendar-cog', 'Periode tahunan'],
+        'periods.index' => ['Kelola Periode', 'settings', 'Periode tahunan'],
         'profile.index' => ['Profil Saya', 'user-circle', 'Akun & keamanan'],
     ];
 

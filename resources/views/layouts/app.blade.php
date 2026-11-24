@@ -34,7 +34,7 @@
         @php($showOther = collect($navigation['more'])->contains(fn ($item) => request()->routeIs($item['route'])))
         <details class="rt03-sidebar-more" @if($showOther) open @endif>
           <summary class="rt03-sidebar-more-trigger">
-            <i data-lucide="layers-2" aria-hidden="true"></i>
+            <i data-lucide="book-open" aria-hidden="true"></i>
             <span>Menu lainnya</span>
             <span class="rt03-sidebar-more-count">{{ count($navigation['more']) }}</span>
             <i data-lucide="chevron-down" aria-hidden="true" class="rt03-sidebar-more-chevron"></i>
