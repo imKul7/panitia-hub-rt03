@@ -50,6 +50,9 @@
     <footer class="app-footer">PANITIA HUB RT 03 <span>•</span> Dikelola bersama, diteruskan bersama.</footer>
   </div>
 
+    {{-- Validasi lintas halaman dan semua role: modal terpusat. --}}
+    <x-form-feedback />
+
     {{-- Dialog konfirmasi terpusat: submit asli tetap melalui route, CSRF, dan policy Laravel. --}}
     <dialog class="rt03-confirm-dialog"
             data-rt03-confirm-dialog

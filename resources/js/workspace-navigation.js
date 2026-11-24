@@ -93,7 +93,10 @@ if (workspaceBody && workspaceSidebar && window.fetch && window.DOMParser
       || year.textContent.trim() !== workspaceBody.querySelector('.topbar-year')?.textContent.trim()) {
       throw new Error('Workspace access or period changed.');
     }
-    return { main, title: page.title, breadcrumb: title.textContent, path: location.pathname };
+    return {
+      main, title: page.title, breadcrumb: title.textContent, path: location.pathname,
+      feedback: page.querySelector('[data-rt03-feedback-dialog]'),
+    };
   }
 
   function clearOldMain(current) {
@@ -108,6 +111,11 @@ if (workspaceBody && workspaceSidebar && window.fetch && window.DOMParser
     document.dispatchEvent(new Event('rt03:workspace:before-swap'));
     clearOldMain(current);
     workspaceBody.querySelector('.app-topbar')?.insertAdjacentElement('afterend', page.main);
+    const existingFeedback = document.querySelector('[data-rt03-feedback-dialog]');
+    if (existingFeedback && page.feedback) {
+      if (existingFeedback.open) existingFeedback.close();
+      existingFeedback.replaceWith(page.feedback);
+    }
     document.title = page.title;
     const breadcrumb = workspaceBody.querySelector('.breadcrumb-current');
     if (breadcrumb) breadcrumb.textContent = page.breadcrumb;
@@ -195,7 +203,7 @@ if (workspaceBody && workspaceSidebar && window.fetch && window.DOMParser
   document.addEventListener('click', event => {
     if (event.defaultPrevented || event.button !== 0 || event.metaKey
       || event.ctrlKey || event.shiftKey || event.altKey) return;
-    if (document.querySelector('dialog[data-rt03-confirm-dialog][open]')) return;
+    if (document.querySelector('dialog[data-rt03-confirm-dialog][open], dialog[data-rt03-feedback-dialog][open]')) return;
 
     const link = event.target instanceof Element ? event.target.closest('a[href]') : null;
     if (!link || link.hasAttribute('download')

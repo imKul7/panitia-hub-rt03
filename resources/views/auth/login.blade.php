@@ -22,4 +22,4 @@
     <label class="field"><span>Kata sandi</span><input type="password" name="password" placeholder="Masukkan kata sandi" autocomplete="current-password" required></label>
     <button type="submit" class="btn btn-red btn-block login-submit">Masuk ke Dashboard <i data-lucide="arrow-up-right"></i></button>
   </form><p class="login-help">Belum memiliki akun? Hubungi ketua panitia atau admin RT 03.</p></div><div class="login-form-footer">© {{date('Y')}} PANITIA HUB RT 03 <span>BERSAMA, LEBIH TERARAH.</span></div></section>
-</main></body></html>
+</main><x-form-feedback /></body></html>

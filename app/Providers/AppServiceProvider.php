@@ -19,6 +19,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // PANITIA HUB uses Indonesian labels for every role and form.
+        // Laravel's validator must use the same language, not its default English.
+        $this->app->setLocale('id');
+
         // Fail closed *before* RefreshDatabase can touch a real/local database.
         // phpunit.xml is configured to use sqlite :memory:, but a stale
         // config cache or local override must never silently bypass isolation.
