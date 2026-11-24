@@ -23,19 +23,22 @@
       <a href="{{ route('public.section', 'lomba') }}" class="inline-link">Lihat perlombaan <i data-lucide="arrow-right"></i></a>
     </div>
 
-    {{-- Hanya tampilkan pemutar aktif ketika pemilik situs menaruh rekaman berizin. --}}
+    {{-- The actual audio is owned by public layout so navigation never restarts it. --}}
     @php($rt03AnthemFile = 'audio/indonesia-raya-instrumental.mp3')
     <div class="rt03-anthem-player" data-rt03-anthem-player>
       <div class="rt03-anthem-icon" aria-hidden="true"><i data-lucide="music-2"></i></div>
       <div class="rt03-anthem-caption">
         <strong>Semangat Kemerdekaan</strong>
-        <span>{{ is_file(public_path($rt03AnthemFile)) ? 'Instrumental Indonesia Raya · putar secara manual' : 'Instrumental segera hadir' }}</span>
+        @if(is_file(public_path($rt03AnthemFile)))
+          <span data-rt03-anthem-status aria-live="polite">Menyiapkan musik...</span>
+        @else
+          <span>Instrumental segera hadir</span>
+        @endif
       </div>
       @if(is_file(public_path($rt03AnthemFile)))
-        <audio data-rt03-anthem-audio preload="none" src="{{ asset($rt03AnthemFile) }}"></audio>
         <button class="rt03-anthem-toggle" type="button" data-rt03-anthem-toggle
                 aria-label="Putar musik instrumental" aria-pressed="false">
-          <i data-lucide="play" aria-hidden="true"></i>
+          <i data-lucide="music-2" aria-hidden="true"></i>
           <span data-rt03-anthem-label>Putar</span>
         </button>
       @else
