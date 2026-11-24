@@ -125,7 +125,7 @@ class AccountIdLoginResetTest extends TestCase
         $this->attachRole($member, 'ketua');
 
         $this->actingAs($admin)->get('/app/panitia')->assertOk()
-            ->assertSee('Manajemen akun & reset kata sandi')
+            ->assertSee('Manajemen akun & reset kata sandi', false)
             ->assertSee($member->login_id)
             ->assertSee($member->email)
             ->assertDontSee($member->password)
