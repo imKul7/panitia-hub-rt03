@@ -48,7 +48,7 @@
     <p>{{ $description }}</p>
     <div class="details" role="status">
       <span class="code">HTTP {{ $status }}</span>
-      <span>Data tidak diubah oleh permintaan yang ditolak.</span>
+      <span>Periksa izin akun atau data yang dikirim, kemudian coba lagi.</span>
     </div>
     <div class="actions">
       <a class="primary" href="{{ (int) $status === 419 ? route('login') : (auth()->check() ? route('dashboard') : route('login')) }}">
