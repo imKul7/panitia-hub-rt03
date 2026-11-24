@@ -23,6 +23,10 @@ class PeopleController extends Controller
         // hashes or remember tokens are selected or serialized to the view.
         $accounts = auth()->user()->is_super_admin
             ? User::query()->select(['id','name','email','is_active','is_super_admin'])
+                ->with(['memberships' => fn ($query) => $query
+                    ->where('event_period_id', $period->id)
+                    ->where('is_active', true)
+                    ->with('division')])
                 ->orderBy('id')->paginate(20, ['*'], 'accounts_page')
             : null;
         return view('panitia.people',compact('period','members','divisions','users','accounts'));
