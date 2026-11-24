@@ -175,16 +175,46 @@ function rt03FilterResultParticipants(form) {
   if (participant.selectedOptions[0]?.disabled) participant.value = '';
 }
 
+// Keep PIC options synchronized with the selected task division.
+function rt03FilterTaskAssignees(form) {
+  const division = form?.querySelector('[data-task-division]');
+  const pic = form?.querySelector('[data-task-assignee]');
+  if (!division || !pic) return;
+
+  const selectedDivision = division.value;
+  let available = 0;
+  for (const option of pic.options) {
+    if (!option.value) continue;
+    const allowed = !selectedDivision || (option.dataset.memberDivisions || '').split(',').includes(selectedDivision);
+    option.hidden = !allowed;
+    option.disabled = !allowed;
+    if (allowed) available += 1;
+  }
+
+  if (pic.selectedOptions[0]?.disabled) pic.value = '';
+  const hint = form.querySelector('[data-task-assignee-hint]');
+  if (hint) {
+    hint.textContent = available
+      ? `${available} panitia aktif tersedia${selectedDivision ? ' di divisi ini' : ''}. Pilih PIC atau biarkan belum ditentukan.`
+      : 'Belum ada PIC aktif pada divisi ini. Tambahkan penugasan melalui Struktur Panitia atau biarkan PIC kosong.';
+  }
+}
+
 function rt03InitWorkspaceForms() {
   document.querySelectorAll('[data-result-competition]').forEach(select => {
     rt03FilterResultParticipants(select.closest('form'));
   });
+  document.querySelectorAll('[data-task-form]').forEach(form => rt03FilterTaskAssignees(form));
 }
 rt03InitWorkspaceForms();
 
 document.addEventListener('change', event => {
   const target = event.target;
   if (!(target instanceof Element)) return;
+  if (target.matches('[data-task-division]')) {
+    rt03FilterTaskAssignees(target.closest('form'));
+    return;
+  }
   if (target.matches('[data-result-competition]')) {
     const form = target.closest('form');
     const participant = form?.querySelector('[data-result-participant]');

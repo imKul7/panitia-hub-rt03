@@ -1,5 +1,5 @@
-@props(['title'=>'Tambah data','label'=>'Tambah baru'])
-<div x-data="{open:false}" class="entry-modal-wrap">
+@props(['title'=>'Tambah data','label'=>'Tambah baru','openOnError'=>false])
+<div x-data="{open: {{ $openOnError ? 'true' : 'false' }}}" class="entry-modal-wrap">
   <button type="button" class="btn btn-red" @click="open=true"><i data-lucide="plus"></i> {{ $label }}</button>
   <template x-teleport="body">
     <div x-show="open" x-transition.opacity class="modal-overlay" x-cloak @keydown.escape.window="open=false" @click.self="open=false" role="presentation">
