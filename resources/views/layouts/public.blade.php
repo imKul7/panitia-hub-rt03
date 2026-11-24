@@ -23,6 +23,13 @@
       <a class="{{ request()->is('informasi/jadwal')?'is-active':'' }}" href="{{ route('public.section','jadwal') }}">Jadwal</a>
       <a class="{{ request()->is('informasi/pengumuman')?'is-active':'' }}" href="{{ route('public.section','pengumuman') }}">Pengumuman</a>
       <a class="{{ request()->is('informasi/hasil')?'is-active':'' }}" href="{{ route('public.section','hasil') }}">Hasil</a><a class="{{request()->routeIs('public.gallery')?'is-active':''}}" href="{{route('public.gallery')}}">Galeri</a>
+      {{-- Mobile only: desktop has the separate Area Panitia button. Always
+           use full navigation for login, never the six-page public router. --}}
+      <a href="{{ route('login') }}" class="rt03-mobile-login-link"
+         data-rt03-full-navigation>
+        <span>Area Panitia</span>
+        <span aria-hidden="true">↗</span>
+      </a>
     </nav>
     <a href="{{ route('login') }}" class="btn btn-navy btn-small header-login">Area Panitia <span aria-hidden="true">↗</span></a>
   </header>
