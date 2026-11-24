@@ -2014,3 +2014,45 @@
 .rt03-anthem-unavailable{font-size:10px;color:#a66370;font-weight:700}
 @media(max-width:540px){.rt03-anthem-player{gap:9px;padding:10px;border-radius:13px}}
 @media(prefers-reduced-motion:reduce){.rt03-anthem-toggle{transition:none!important}}
+
+
+/* Persistent instrumental mini-player — hidden on hero, visible on inner pages. */
+.public-body .rt03-anthem-dock {
+  position:fixed;z-index:55;right:20px;bottom:20px;
+  display:flex;align-items:center;gap:10px;
+  width:min(370px,calc(100vw - 32px));padding:12px;
+  background:rgba(255,255,255,.97);
+  border:1px solid rgba(187,37,54,.18);border-radius:16px;
+  box-shadow:0 13px 40px rgba(29,40,58,.2),0 3px 9px rgba(29,40,58,.05);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.public-body.rt03-public-home .rt03-anthem-dock{display:none}
+.public-body .rt03-anthem-dock-icon{
+  width:39px;height:39px;flex:0 0 auto;
+  display:grid;place-items:center;border-radius:12px;
+  background:#fff0f1;color:#c7253b;
+}
+.public-body .rt03-anthem-dock-icon svg{height:19px;width:19px}
+.public-body .rt03-anthem-dock-copy{min-width:0;flex:1;display:grid;gap:4px}
+.public-body .rt03-anthem-dock-copy strong{
+  color:#273951;font-size:11px;font-weight:800;
+}
+.public-body .rt03-anthem-dock-copy span{
+  color:#718195;font-size:10px;line-height:1.45;
+}
+.public-body .rt03-anthem-dock .rt03-anthem-toggle{
+  flex:0 0 auto;min-width:66px;
+}
+.public-body .rt03-anthem-dock.is-playing{
+  border-color:rgba(201,37,59,.38);
+}
+@media (max-width:640px) {
+  .public-body .rt03-anthem-dock{
+    bottom:12px;left:12px;right:12px;
+    width:auto;padding:9px 10px;border-radius:14px;
+  }
+  .public-body .rt03-anthem-dock-icon{width:34px;height:34px}
+}
+@media (prefers-reduced-motion:reduce) {
+  .public-body .rt03-anthem-dock{transition:none!important}
+}
