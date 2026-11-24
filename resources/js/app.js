@@ -5,6 +5,7 @@ import { SplitText } from 'gsap/SplitText';
 import { Flip } from 'gsap/Flip';
 import Lenis from 'lenis';
 import { createIcons, icons } from 'lucide';
+import './public-navigation.js';
 
 gsap.registerPlugin(ScrollTrigger, SplitText, Flip);
 window.Alpine = Alpine;
@@ -19,60 +20,96 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 
 if (!reduceMotion && window.matchMedia('(pointer:fine)').matches) {
   const lenis = new Lenis({ duration: 1.05, wheelMultiplier: 0.9, smoothWheel: true, prevent: node => node?.matches?.('.sidebar-nav') });
+  if (document.body.classList.contains('public-body')) window.rt03PublicLenis = lenis;
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add((time) => lenis.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);
   window.addEventListener('beforeunload', () => lenis.destroy(), { once: true });
 }
 
-if (!reduceMotion) {
-  // Text split by word, not by character: expressive but still readable.
-  const animate = () => {
-    document.querySelectorAll('[data-word-reveal]').forEach(el => {
-      SplitText.create(el, {
-        type: 'words',
-        autoSplit: true,
-        onSplit(self) {
-          return gsap.from(self.words, {
-            opacity: 0,
-            y: 22,
-            duration: 0.7,
-            stagger: 0.045,
-            ease: 'power3.out',
-            scrollTrigger: { trigger: el, start: 'top 92%', once: true },
-          });
-        },
-      });
+// Keep reveal animations working after content-only public navigation.
+// Old SplitText observers and ScrollTriggers are disposed before the swap.
+const rt03PublicSplits = new Set();
+function rt03AnimateReveals(root = document, fast = false) {
+  if (reduceMotion) return;
+  root.querySelectorAll('[data-word-reveal]').forEach(el => {
+    if (el.dataset.rt03Animated) return;
+    el.dataset.rt03Animated = '1';
+    const split = SplitText.create(el, {
+      type: 'words',
+      autoSplit: true,
+      onSplit(self) {
+        return gsap.from(self.words, {
+          opacity: 0, y: fast ? 7 : 22,
+          duration: fast ? .18 : .7,
+          stagger: fast ? .006 : .045,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 92%', once: true },
+        });
+      },
     });
-    document.querySelectorAll('[data-reveal]').forEach(el => {
-      gsap.fromTo(el, { autoAlpha: 0, y: 23 }, {
-        autoAlpha: 1, y: 0, duration: .78, ease: 'power3.out',
-        scrollTrigger: { trigger: el, start: 'top 91%', once: true },
-      });
+    if (document.body.classList.contains('public-body')) rt03PublicSplits.add(split);
+  });
+  root.querySelectorAll('[data-reveal]').forEach(el => {
+    if (el.dataset.rt03Animated) return;
+    el.dataset.rt03Animated = '1';
+    gsap.fromTo(el, { autoAlpha: 0, y: fast ? 8 : 23 }, {
+      autoAlpha: 1, y: 0, duration: fast ? .24 : .78, ease: 'power3.out',
+      scrollTrigger: { trigger: el, start: 'top 91%', once: true },
     });
-    document.querySelectorAll('[data-counter]').forEach(el => {
-      const total = Number(el.dataset.counter || 0);
-      if (!Number.isFinite(total) || total === 0) return;
-      const state = { number: 0 };
-      gsap.to(state, {
-        number: total, duration: 1.0, ease: 'power2.out',
-        scrollTrigger: { trigger: el, start: 'top 95%', once: true },
-        onUpdate: () => { el.textContent = String(Math.round(state.number)); },
-      });
+  });
+  root.querySelectorAll('[data-counter]').forEach(el => {
+    if (el.dataset.rt03Animated) return;
+    el.dataset.rt03Animated = '1';
+    const total = Number(el.dataset.counter || 0);
+    if (!Number.isFinite(total) || total === 0) return;
+    const state = { number: 0 };
+    gsap.to(state, {
+      number: total, duration: fast ? .28 : 1.0, ease: 'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 95%', once: true },
+      onUpdate: () => { el.textContent = String(Math.round(state.number)); },
     });
-    document.querySelectorAll('[data-stagger]').forEach(el => {
-      const cards = el.querySelectorAll('.reveal-child');
-      if (!cards.length) return;
-      gsap.fromTo(cards, { autoAlpha: 0, y: 22 }, {
-        autoAlpha: 1, y: 0, duration: .65, stagger: .065, ease: 'power2.out',
-        scrollTrigger: { trigger: el, start: 'top 91%', once: true },
-      });
+  });
+  root.querySelectorAll('[data-stagger]').forEach(el => {
+    if (el.dataset.rt03Animated) return;
+    el.dataset.rt03Animated = '1';
+    const cards = el.querySelectorAll('.reveal-child');
+    if (!cards.length) return;
+    gsap.fromTo(cards, { autoAlpha: 0, y: fast ? 8 : 22 }, {
+      autoAlpha: 1, y: 0, duration: fast ? .24 : .65,
+      stagger: fast ? .012 : .065, ease: 'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 91%', once: true },
     });
-  };
-  if (document.fonts) document.fonts.ready.then(animate);
-  else animate();
+  });
 }
 
+if (!reduceMotion) {
+  if (document.fonts) {
+    // Fast navigation never waits for this promise. It only gates initial
+    // typography measuring for GSAP's SplitText.
+    document.fonts.ready.then(() => rt03AnimateReveals());
+  } else {
+    rt03AnimateReveals();
+  }
+}
+
+if (document.body.classList.contains('public-body')) {
+  document.addEventListener('rt03:public:before-swap', () => {
+    if (reduceMotion) return;
+    ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    rt03PublicSplits.forEach(split => split.revert());
+    rt03PublicSplits.clear();
+  });
+
+  document.addEventListener('rt03:public:after-swap', () => {
+    activateIcons();
+    rt03AnimateReveals(document.querySelector('#main'), true);
+    if (!reduceMotion) {
+      ScrollTrigger.refresh();
+    }
+    window.rt03PublicLenis?.resize();
+  });
+}
 // Hero login uses only actual user-provided local photos; nothing is fabricated.
 const slides = Array.from(document.querySelectorAll('[data-login-slide]'));
 if (slides.length > 1 && !reduceMotion) {

@@ -1726,3 +1726,29 @@
   .rt03-confirm-dialog button{transition:none!important}
 }
 /* END RT03-CONFIRMATION-V1 */
+
+
+/* RT03-QUICK-NAV-V1: immediate feedback + quick in-document public page swaps. */
+.public-body .public-nav a.is-pending{
+  color:#b51e30;
+}
+.public-body .public-nav a.is-pending::after{
+  content:"";position:absolute;left:0;right:0;bottom:-11px;
+  height:2px;background:#ce263c;
+  transform:scaleX(1);transform-origin:center;
+}
+.public-body .public-nav.is-navigating a:not(.is-pending){
+  opacity:.72;
+}
+.public-body #main.rt03-quick-enter{
+  animation:rt03-quick-page-enter .15s ease-out both;
+}
+@keyframes rt03-quick-page-enter{
+  from{opacity:.82;transform:translateY(5px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@media(prefers-reduced-motion:reduce){
+  .public-body #main.rt03-quick-enter{animation:none!important}
+  .public-body .public-nav a.is-pending::after{transition:none!important}
+}
+/* END RT03-QUICK-NAV-V1 */
