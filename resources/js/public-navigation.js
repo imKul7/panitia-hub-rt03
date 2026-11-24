@@ -129,6 +129,8 @@ if (rt03Body?.matches('[data-rt03-public-router]') && rt03Nav
   async function navigate(url, mode = 'push', restoredY = 0) {
     const version = ++requestVersion;
     if (mode === 'push' && url.pathname === location.pathname) {
+      // Also cancels a previous pending navigation and restores the active tab.
+      reflectCurrent(location.pathname);
       closeMobileMenu();
       window.rt03PublicLenis?.scrollTo(0, { immediate: true, force: true });
       window.scrollTo(0, 0);
@@ -183,22 +185,21 @@ if (rt03Body?.matches('[data-rt03-public-router]') && rt03Nav
     if (link) prefetch(link);
   });
 
-  // At idle, prefetch at most two public pages concurrently. On localhost this
-  // makes the first click feel immediate without blocking the initial hero.
-  const warmPages = () => {
+  // Laravel's local development server may be single-threaded. Warming all
+  // five pages concurrently can delay actual clicks. Only warm the two most
+  // frequently visited destinations (Lomba and Jadwal), sequentially.
+  // The remaining pages are fetched on pointer hover / keyboard focus.
+  const warmPages = async () => {
     if (document.visibilityState === 'hidden') return;
-    const remaining = menuLinks.filter(link => new URL(link.href).pathname !== location.pathname);
-    let cursor = 0;
-    const next = async () => {
-      while (cursor < remaining.length && document.visibilityState === 'visible') {
-        const link = remaining[cursor++];
-        await fetchPage(new URL(link.href)).catch(() => {});
-      }
-    };
-    void Promise.all([next(), next()]);
+    const favorites = ['/informasi/lomba', '/informasi/jadwal'];
+    for (const path of favorites) {
+      if (document.visibilityState !== 'visible') break;
+      if (path === location.pathname || !eligiblePaths.has(path)) continue;
+      await fetchPage(new URL(path, location.origin)).catch(() => {});
+    }
   };
-  if ('requestIdleCallback' in window) requestIdleCallback(warmPages, { timeout: 1800 });
-  else setTimeout(warmPages, 1100);
+  if ('requestIdleCallback' in window) requestIdleCallback(() => { void warmPages(); }, { timeout: 1800 });
+  else setTimeout(() => { void warmPages(); }, 1100);
 
   window.addEventListener('pageshow', () => reflectCurrent(location.pathname));
   reflectCurrent(location.pathname);
