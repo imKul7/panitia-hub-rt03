@@ -43,6 +43,7 @@ jobs:
       - name: Syntax check fast navigation
         run: |
           node --check resources/js/public-navigation.js
+          node --check resources/js/public-audio.js
           node --check resources/js/workspace-navigation.js
           node --check resources/js/validation-feedback.js
       - name: Vite production build
