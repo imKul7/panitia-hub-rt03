@@ -41,7 +41,9 @@ jobs:
       - name: Frontend dependencies
         run: npm ci
       - name: Syntax check fast navigation
-        run: node --check resources/js/public-navigation.js
+        run: |
+          node --check resources/js/public-navigation.js
+          node --check resources/js/workspace-navigation.js
       - name: Vite production build
         run: npm run build
       - name: Laravel feature and unit tests (SQLite in-memory)

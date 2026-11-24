@@ -8,7 +8,7 @@
   <title>@yield('title','Dashboard') · PANITIA HUB RT 03</title>
   @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
-<body class="app-body" x-data="{sidebar:false}">
+<body class="app-body" x-data="{sidebar:false}" data-rt03-workspace-router>
   @php($period = \App\Support\Workspace::period())
   <aside class="app-sidebar" :class="{'is-open':sidebar}" aria-label="Menu utama">
     <a href="{{route('dashboard')}}" class="brand app-brand"><span class="brand-mark">@php($rtLogo = collect(['logo.png','logo.jpg','logo.jpeg','logo.webp'])->first(fn($f) => file_exists(public_path('images/rt03/'.$f))))@if($rtLogo)<img src="{{ asset('images/rt03/'.$rtLogo) }}" alt="Logo RT 03">@else<span>03</span>@endif</span><span class="brand-text"><strong>PANITIA HUB</strong><small>WORKSPACE / {{ $period->year }}</small></span></a>
@@ -37,6 +37,10 @@
   </aside>
   <div class="sidebar-scrim" x-show="sidebar" x-cloak @click="sidebar=false"></div>
   <div class="app-main">
+    <div class="rt03-workspace-progress" data-rt03-workspace-progress role="status" aria-live="polite" aria-atomic="true">
+      <span class="rt03-workspace-progress-bar" aria-hidden="true"></span>
+      <span class="rt03-workspace-progress-label" data-rt03-workspace-progress-label></span>
+    </div>
     <header class="app-topbar"><div class="topbar-start"><button type="button" class="icon-button mobile-toggle" aria-label="Buka menu" @click="sidebar=true"><i data-lucide="menu"></i></button><span class="breadcrumb-root">PANITIA HUB</span><i data-lucide="chevron-right" class="breadcrumb-chevron"></i><span class="breadcrumb-current">@yield('title','Dashboard')</span></div><div class="topbar-actions"><span class="topbar-year"><span class="live-dot"></span> {{ $period->year }}</span><a href="{{route('public.home')}}" target="_blank" rel="noopener" class="icon-button" title="Lihat portal warga"><i data-lucide="external-link"></i></a><a href="{{route('profile.index')}}" class="account-pill"><x-account-avatar :user="auth()->user()" size="small" /><span class="account-name">{{ auth()->user()->name }}</span></a><form method="post" action="{{route('logout')}}">@csrf<button class="icon-button" type="submit" title="Keluar"><i data-lucide="log-out"></i></button></form></div></header>
     <main class="page-content">
       @if(session('success'))<div role="status" class="notice notice-success"><i data-lucide="check-circle-2"></i><span>{{session('success')}}</span></div>@endif

@@ -1752,3 +1752,61 @@
   .public-body .public-nav a.is-pending::after{transition:none!important}
 }
 /* END RT03-QUICK-NAV-V1 */
+
+
+/* RT03 WORKSPACE FAST RESPONSE V1. Scoped to internal app only. */
+.app-body .rt03-workspace-progress{
+  position:fixed;z-index:70;top:0;left:0;right:0;
+  height:3px;pointer-events:none;overflow:visible;
+  opacity:0;transition:opacity .12s ease;
+}
+.app-body .rt03-workspace-progress.is-visible{opacity:1}
+.app-body .rt03-workspace-progress-bar{
+  display:block;width:44%;height:3px;
+  background:linear-gradient(90deg,#be2136,#f36e64,#c22139);
+  box-shadow:0 1px 8px rgba(196,40,55,.35);
+  transform:translateX(-115%);
+  animation:rt03-workspace-progress 1.05s ease-in-out infinite;
+}
+.app-body .rt03-workspace-progress-label{
+  position:absolute;width:1px;height:1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;
+}
+.app-body .sidebar-link.is-pending{
+  background:#fff0f0;color:#b81e32;box-shadow:inset 3px 0 0 #cf263a;
+}
+.app-body .sidebar-link.active{
+  transition:background-color .13s ease,color .13s ease;
+}
+.app-body .page-content.rt03-workspace-quick-enter{
+  animation:rt03-workspace-enter .13s ease-out both;
+}
+.app-body form.rt03-form-submitting{
+  cursor:progress;
+}
+.app-body form.rt03-form-submitting button[type=submit],
+.app-body form.rt03-form-submitting input[type=submit]{
+  position:relative;opacity:.78;cursor:progress;
+}
+.app-body form.rt03-form-submitting button[type=submit]::after{
+  content:"";display:inline-block;vertical-align:middle;
+  height:12px;width:12px;margin-left:8px;border:2px solid currentColor;
+  border-right-color:transparent;border-radius:50%;
+  animation:rt03-workspace-spinner .65s linear infinite;
+}
+@keyframes rt03-workspace-progress{
+  0%{transform:translateX(-115%)}
+  60%{transform:translateX(105%)}
+  100%{transform:translateX(245%)}
+}
+@keyframes rt03-workspace-spinner{to{transform:rotate(360deg)}}
+@keyframes rt03-workspace-enter{
+  from{opacity:.85;transform:translateY(5px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@media(prefers-reduced-motion:reduce){
+  .app-body .rt03-workspace-progress-bar{animation:none;transform:none;width:100%}
+  .app-body .page-content.rt03-workspace-quick-enter{animation:none}
+  .app-body form.rt03-form-submitting button[type=submit]::after{animation:none}
+}
+/* END RT03 WORKSPACE FAST RESPONSE V1 */
