@@ -11,7 +11,8 @@ const rt03Nav = document.querySelector('[data-public-nav]');
 
 if (rt03Body?.matches('[data-rt03-public-router]') && rt03Nav
   && window.fetch && window.history?.pushState && window.DOMParser) {
-  const menuLinks = Array.from(rt03Nav.querySelectorAll('a[href]'));
+  // The login CTA must NOT enter the six-page public SPA router or prefetch cache.
+  const menuLinks = Array.from(rt03Nav.querySelectorAll('a[href]:not([data-rt03-full-navigation])'));
   const eligiblePaths = new Set(menuLinks.map(a => new URL(a.href, location.href).pathname));
   const ttlMs = 15000; // Fresh public info after a short interval.
   const pageCache = new Map(); // Public HTML only. Never cache login/workspace.
