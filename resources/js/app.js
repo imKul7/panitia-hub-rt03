@@ -8,6 +8,7 @@ import Lenis from 'lenis';
 // catalog adds hundreds of KB of unnecessary JavaScript on every page.
 import {
   createIcons,
+  Lightbulb,
   CircleAlert, Archive, ArrowLeft, ArrowRight, ArrowUpRight, Award,
   Book, BookOpen, Calendar, CalendarDays, CircleCheck, SquareCheckBig,
   ChevronRight, ChevronDown, Contact, LayoutDashboard, Download,
@@ -20,6 +21,7 @@ import {
 } from 'lucide';
 
 const icons = {
+  Lightbulb,
   AlertCircle: CircleAlert,
   Archive, ArrowLeft, ArrowRight, ArrowUpRight, Award,
   Book, BookOpen, Calendar, CalendarDays,
@@ -36,6 +38,7 @@ const icons = {
 };
 import './public-navigation.js';
 import './workspace-navigation.js';
+import './validation-feedback.js';
 
 gsap.registerPlugin(ScrollTrigger, SplitText, Flip);
 window.Alpine = Alpine;
