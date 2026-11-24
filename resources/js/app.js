@@ -4,7 +4,36 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import { Flip } from 'gsap/Flip';
 import Lenis from 'lenis';
-import { createIcons, icons } from 'lucide';
+// Import only icons used by Blade templates. Importing the complete icon
+// catalog adds hundreds of KB of unnecessary JavaScript on every page.
+import {
+  createIcons,
+  CircleAlert, Archive, ArrowLeft, ArrowRight, ArrowUpRight, Award,
+  Book, BookOpen, Calendar, CalendarDays, CircleCheck, SquareCheckBig,
+  ChevronRight, ChevronDown, Contact, LayoutDashboard, Download,
+  ExternalLink, Flag, Folder, Gift, Images, Info, Lock, LogOut,
+  Megaphone, Menu, MessageCircle, Notebook, Package, Plus, Receipt,
+  Settings, ShieldAlert, Trash2, Trophy, CircleUser, Users, Wallet, X,
+  GraduationCap, HeartHandshake, ImageOff, BadgeCheck, Camera, Clock,
+  Eye, IdCard, Inbox, KeyRound, LockKeyhole, MapPin, Save, Shield,
+  ShieldCheck, Upload, UsersRound, ClipboardList,
+} from 'lucide';
+
+const icons = {
+  AlertCircle: CircleAlert,
+  Archive, ArrowLeft, ArrowRight, ArrowUpRight, Award,
+  Book, BookOpen, Calendar, CalendarDays,
+  CheckCircle2: CircleCheck,
+  CheckSquare: SquareCheckBig,
+  ChevronRight, ChevronDown, Contact, Dashboard: LayoutDashboard,
+  Download, ExternalLink, Flag, Folder, Gift, Images, Info, Lock,
+  LogOut, Megaphone, Menu, Message: MessageCircle, Notebook, Package,
+  Plus, Receipt, Settings, ShieldAlert, Trash2, Trophy,
+  UserCircle: CircleUser, Users, Wallet, X, GraduationCap,
+  HeartHandshake, ImageOff, BadgeCheck, Camera, Clock, Eye, IdCard,
+  Inbox, KeyRound, LockKeyhole, MapPin, Save, Shield, ShieldCheck,
+  Upload, UsersRound, ClipboardList,
+};
 import './public-navigation.js';
 import './workspace-navigation.js';
 
