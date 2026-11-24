@@ -22,4 +22,5 @@
     <label class="field"><span>Kata sandi</span><span class="rt03-profile-password-field"><input type="password" name="password" placeholder="Masukkan kata sandi" autocomplete="current-password" required><button type="button" data-toggle-password aria-label="Tampilkan kata sandi" aria-pressed="false" title="Lihat kata sandi"><i data-lucide="eye" aria-hidden="true"></i></button></span></label>
     <button type="submit" class="btn btn-red btn-block login-submit">Masuk ke Dashboard <i data-lucide="arrow-up-right"></i></button>
   </form><p class="login-help">Gunakan ID Login yang diberikan oleh pengurus. Belum punya akun? Hubungi ketua panitia atau admin RT 03.</p></div><div class="login-form-footer">© {{date('Y')}} PANITIA HUB RT 03 <span>BERSAMA, LEBIH TERARAH.</span></div></section>
-</main><x-form-feedback /></body></html>
+</main><x-form-feedback /><x-loading-animation />
+</body></html>

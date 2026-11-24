@@ -151,6 +151,7 @@ if (workspaceBody && workspaceSidebar && window.fetch && window.DOMParser
 
     if (mode === 'push' && url.href === location.href) {
       currentPage(url.pathname);
+      document.dispatchEvent(new Event('rt03:loading:end'));
       setProgress('', false);
       const y = 0;
       window.rt03WorkspaceLenis?.scrollTo(y, { immediate: true, force: true });
@@ -162,6 +163,7 @@ if (workspaceBody && workspaceSidebar && window.fetch && window.DOMParser
     activeController = controller;
     isChangingPage = true;
     pendingPage(url.pathname);
+    document.dispatchEvent(new CustomEvent('rt03:loading:start', { detail: { label: 'Membuka halaman…' } }));
     const previousMain = document.querySelector(mainSelector);
     previousMain?.setAttribute('aria-busy', 'true');
 
@@ -193,6 +195,7 @@ if (workspaceBody && workspaceSidebar && window.fetch && window.DOMParser
       if (version === requestVersion) {
         activeController = null;
         isChangingPage = false;
+        document.dispatchEvent(new Event('rt03:loading:end'));
         document.querySelector(mainSelector)?.removeAttribute('aria-busy');
         currentPage(location.pathname);
         setProgress('', false);

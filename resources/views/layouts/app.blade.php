@@ -88,4 +88,5 @@
         </div>
       </div>
     </dialog>
+<x-loading-animation />
 </body></html>

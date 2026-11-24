@@ -47,4 +47,5 @@
   @endif
 
   <footer class="public-footer"><div class="footer-inner"><div><div class="brand brand--light"><span class="brand-mark">@php($rtLogo = collect(['logo.png','logo.jpg','logo.jpeg','logo.webp'])->first(fn($f) => file_exists(public_path('images/rt03/'.$f))))@if($rtLogo)<img src="{{ asset('images/rt03/'.$rtLogo) }}" alt="Logo RT 03">@else<span>03</span>@endif</span><span class="brand-text"><strong>PANITIA HUB</strong><small>UNTUK GENERASI SELANJUTNYA</small></span></div><p>Dibangun untuk kerja sama yang lebih rapi, hangat, dan berkelanjutan.</p></div><div class="footer-links"><a href="{{route('public.section','jadwal')}}">Jadwal</a><a href="{{route('public.section','lomba')}}">Lomba</a><a href="{{route('public.section','pengumuman')}}">Pengumuman</a><a href="{{route('public.gallery')}}">Galeri</a><a href="{{route('login')}}">Masuk Panitia</a></div></div><div class="footer-bottom">© {{ date('Y') }} PANITIA HUB RT 03 <span>Dirancang untuk komunitas, bukan sekadar acara.</span></div></footer>
+<x-loading-animation />
 </body></html>
