@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title','Dashboard')
 @section('content')
-<div class="page-head dashboard-heading"><div><span class="eyebrow"><span class="eyebrow-line"></span> WORKSPACE / {{ $period->year }}</span><h1 data-word-reveal>Selamat datang, {{ explode(' ', auth()->user()->name)[0] }}<span class="text-red">.</span></h1><p>Pantau yang penting. Kerjakan yang perlu. Sisanya kita selesaikan bersama.</p></div><div class="head-actions"><a href="{{route('tasks.index')}}" class="btn btn-navy">Lihat tugas <i data-lucide="arrow-up-right"></i></a></div></div>
+<div class="page-head dashboard-heading"><div><span class="eyebrow"><span class="eyebrow-line"></span> WORKSPACE / {{ $period->year }}</span><h1 data-word-reveal>Selamat datang, {{ explode(' ', auth()->user()->name)[0] }}<span class="text-red">.</span></h1><p>Prioritas, tugas, dan progres.</p></div><div class="head-actions"><a href="{{route('tasks.index')}}" class="btn btn-navy">Lihat tugas <i data-lucide="arrow-up-right"></i></a></div></div>
 <div class="dashboard-banner" data-reveal><div class="banner-content"><span class="banner-label">PERSIAPAN KEMERDEKAAN • RT 03</span><h2>Kerja kecil hari ini.<br>Perayaan besar nanti.</h2><span class="banner-meta">{{ $period->name }}</span></div><div class="banner-number">17<span>08</span></div></div>
 <div class="metric-grid" data-stagger>
 @foreach([['Tugas berjalan',$stats['tasks']-$stats['done'],'clipboard-list'],['Sudah selesai',$stats['done'],'check-circle-2'],['Butuh perhatian',$stats['blocked']+$stats['late'],'alert-circle'],['Lomba disiapkan',$stats['competitions'],'trophy']] as $stat)
