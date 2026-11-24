@@ -37,10 +37,10 @@ function clientReason(input) {
   const v = input.validity;
   if (v.valueMissing) return 'Kolom ini wajib diisi sebelum data dapat disimpan.';
   if (v.typeMismatch) return 'Format nilai belum benar.';
-  if (v.tooLong) return \`Teks terlalu panjang. Maksimal \${input.maxLength} karakter.\`;
-  if (v.tooShort) return \`Teks terlalu pendek. Minimal \${input.minLength} karakter.\`;
-  if (v.rangeUnderflow) return \`Nilai harus minimal \${input.min}.\`;
-  if (v.rangeOverflow) return \`Nilai tidak boleh melebihi \${input.max}.\`;
+  if (v.tooLong) return `Teks terlalu panjang. Maksimal ${input.maxLength} karakter.`;
+  if (v.tooShort) return `Teks terlalu pendek. Minimal ${input.minLength} karakter.`;
+  if (v.rangeUnderflow) return `Nilai harus minimal ${input.min}.`;
+  if (v.rangeOverflow) return `Nilai tidak boleh melebihi ${input.max}.`;
   if (v.stepMismatch || v.badInput) return 'Gunakan angka atau nilai yang sesuai ketentuan kolom.';
   if (v.patternMismatch) return 'Format isian belum sesuai ketentuan kolom.';
   return 'Nilai belum sesuai dengan ketentuan formulir.';
@@ -167,7 +167,7 @@ function displayClientErrors(entries, form) {
   if (entries.length > MAX_VISIBLE_ERRORS) {
     const more = document.createElement('li');
     more.className = 'rt03-feedback-overflow';
-    more.textContent = \`Dan \${entries.length - MAX_VISIBLE_ERRORS} kolom lainnya perlu diperbaiki.\`;
+    more.textContent = `Dan ${entries.length - MAX_VISIBLE_ERRORS} kolom lainnya perlu diperbaiki.`;
     list.append(more);
   }
   wrap.hidden = false;
