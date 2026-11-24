@@ -317,7 +317,7 @@ class PanitiaHubTest extends TestCase
             'division_id'=>$hadiah->id,
             'assigned_to'=>$other->id,
             'priority'=>'medium',
-        ])->assertStatus(422);
+        ])->assertRedirect()->assertSessionHasErrors('assigned_to');
         $this->assertDatabaseMissing('tasks',['title'=>'Tugas tidak cocok divisi']);
     }
 
