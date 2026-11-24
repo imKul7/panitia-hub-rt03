@@ -23,7 +23,7 @@ class User extends Authenticatable
      */
     public function getLoginIdAttribute(): string
     {
-        return 'RT03-'.str_pad((string) $this->getKey(), 6, '0', STR_PAD_LEFT);
+        return 'RT03-'.str_pad((string) $this->getKey(), 2, '0', STR_PAD_LEFT);
     }
 
     public function memberships()
