@@ -40,6 +40,7 @@ import './public-navigation.js';
 import './public-audio.js';
 import './workspace-navigation.js';
 import './validation-feedback.js';
+import './loading-animation.js';
 
 gsap.registerPlugin(ScrollTrigger, SplitText, Flip);
 window.Alpine = Alpine;
@@ -62,11 +63,49 @@ if (!reduceMotion && window.matchMedia('(pointer:fine)').matches) {
   window.addEventListener('beforeunload', () => lenis.destroy(), { once: true });
 }
 
+// Scroll-driven 3D card zoom across ALL resident pages.
+// CSS individual scale/rotate properties compose with GSAP's existing
+// transform-based word reveals and staggered card entrance. No reflows.
+function rt03InitDepth(root = document) {
+  if (reduceMotion || !document.body.classList.contains('public-body') || !root) return;
+  const mobile = window.matchMedia('(max-width: 720px)').matches;
+  const selectors = [
+    '.rt03-hero-visual', '.rt03-hero-copy',
+    '.section-heading', '.feature-tile',
+    '.neighborhood-media', '.neighborhood-content',
+    '.agenda-row', '.notice-tile', '.notice-tile-placeholder',
+    '.rt03-closing-copy', '.rt03-listing-content',
+    '.listing-card', '.gallery-card', '.empty-state',
+  ];
+  const cards = Array.from(root.querySelectorAll(selectors.join(',')));
+  // Restrict simultaneously tracked cards in huge public galleries.
+  // The rest remain fully visible and interactive without JS animation.
+  for (const card of cards.slice(0, 100)) {
+    if (card.dataset.rt03DepthReady) continue;
+    card.dataset.rt03DepthReady = '1';
+    card.classList.add('rt03-scroll-depth');
+    const distance = mobile ? .027 : .055;
+    const tilt = mobile ? 1.3 : 4.5;
+    ScrollTrigger.create({
+      trigger: card,
+      start: 'top 99%',
+      end: 'top 55%',
+      invalidateOnRefresh: true,
+      onUpdate: self => {
+        const remaining = 1 - self.progress;
+        card.style.setProperty('--rt03-depth-scale', (1 - distance * remaining).toFixed(4));
+        card.style.setProperty('--rt03-depth-tilt', (tilt * remaining).toFixed(2) + 'deg');
+      },
+    });
+  }
+}
+
 // Keep reveal animations working after content-only public navigation.
 // Old SplitText observers and ScrollTriggers are disposed before the swap.
 const rt03PublicSplits = new Set();
 function rt03AnimateReveals(root = document, fast = false) {
-  if (reduceMotion) return;
+  if (reduceMotion || !root) return;
+  rt03InitDepth(root);
   root.querySelectorAll('[data-word-reveal]').forEach(el => {
     if (el.dataset.rt03Animated) return;
     el.dataset.rt03Animated = '1';

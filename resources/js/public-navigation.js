@@ -131,6 +131,7 @@ if (rt03Body?.matches('[data-rt03-public-router]') && rt03Nav
     if (mode === 'push' && url.pathname === location.pathname) {
       // Also cancels a previous pending navigation and restores the active tab.
       reflectCurrent(location.pathname);
+      document.dispatchEvent(new Event('rt03:loading:end'));
       closeMobileMenu();
       document.getElementById('main')?.removeAttribute('aria-busy');
       window.rt03PublicLenis?.scrollTo(0, { immediate: true, force: true });
@@ -138,6 +139,7 @@ if (rt03Body?.matches('[data-rt03-public-router]') && rt03Nav
       return;
     }
     reflectPending(url.pathname);
+    document.dispatchEvent(new CustomEvent('rt03:loading:start', { detail: { label: 'Membuka halaman…' } }));
     document.getElementById('main')?.setAttribute('aria-busy', 'true');
     try {
       const html = await fetchPage(url);
@@ -152,6 +154,7 @@ if (rt03Body?.matches('[data-rt03-public-router]') && rt03Nav
     } finally {
       if (version === requestVersion) {
         reflectPending(null);
+        document.dispatchEvent(new Event('rt03:loading:end'));
         document.getElementById('main')?.removeAttribute('aria-busy');
       }
     }
