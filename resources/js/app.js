@@ -17,7 +17,7 @@ import {
   Settings, ShieldAlert, Trash2, Trophy, CircleUser, Users, Wallet, X,
   GraduationCap, HeartHandshake, ImageOff, BadgeCheck, Camera, Clock,
   Eye, IdCard, Inbox, KeyRound, LockKeyhole, MapPin, Save, Shield,
-  ShieldCheck, Upload, UsersRound, ClipboardList,
+  ShieldCheck, Upload, UsersRound, ClipboardList, Music2, Play, Pause,
 } from 'lucide';
 
 const icons = {
@@ -34,7 +34,7 @@ const icons = {
   UserCircle: CircleUser, Users, Wallet, X, GraduationCap,
   HeartHandshake, ImageOff, BadgeCheck, Camera, Clock, Eye, IdCard,
   Inbox, KeyRound, LockKeyhole, MapPin, Save, Shield, ShieldCheck,
-  Upload, UsersRound, ClipboardList,
+  Upload, UsersRound, ClipboardList, Music2, Play, Pause,
 };
 import './public-navigation.js';
 import './workspace-navigation.js';
@@ -301,6 +301,38 @@ document.addEventListener('rt03:workspace:after-swap', () => {
     ScrollTrigger.refresh();
   }
   window.rt03WorkspaceLenis?.resize();
+});
+
+// Landing page instrumental: user-initiated playback only. Autoplay with
+// sound is restricted by browsers and must never be forced. No external URL.
+document.addEventListener('click', event => {
+  const button = event.target instanceof Element
+    ? event.target.closest('[data-rt03-anthem-toggle]')
+    : null;
+  if (!button) return;
+  const wrapper = button.closest('[data-rt03-anthem-player]');
+  const audio = wrapper?.querySelector('[data-rt03-anthem-audio]');
+  const label = button.querySelector('[data-rt03-anthem-label]');
+  if (!audio) return;
+
+  const update = playing => {
+    button.setAttribute('aria-pressed', String(playing));
+    button.setAttribute('aria-label', playing ? 'Jeda musik instrumental' : 'Putar musik instrumental');
+    if (label) label.textContent = playing ? 'Jeda' : 'Putar';
+    wrapper.classList.toggle('is-playing', playing);
+  };
+  if (!audio.dataset.rt03Handlers) {
+    audio.dataset.rt03Handlers = '1';
+    audio.addEventListener('pause', () => update(false));
+    audio.addEventListener('ended', () => update(false));
+    audio.addEventListener('play', () => update(true));
+  }
+  if (audio.paused) {
+    audio.volume = .38;
+    audio.play().then(() => update(true)).catch(() => update(false));
+  } else {
+    audio.pause();
+  }
 });
 
 // One branded, accessible confirmation dialog for all committee actions.

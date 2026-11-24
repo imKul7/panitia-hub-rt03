@@ -137,7 +137,7 @@ class GlobalValidationFeedbackTest extends TestCase
 
     public function test_login_validation_uses_feedback_without_leaking_password(): void
     {
-        $this->post('/login', ['email'=>'invalid-email','password'=>'password-sekali-pakai'])
+        $this->post('/login', ['login_id'=>'invalid-id','password'=>'password-sekali-pakai'])
             ->assertSessionHasErrors('email');
         $this->get('/login')->assertOk()
             ->assertSee('data-rt03-auto-open="1"', false)

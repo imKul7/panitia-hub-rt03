@@ -1949,3 +1949,68 @@
   .rt03-feedback-dialog button{transition:none!important}
 }
 /* END GLOBAL FEEDBACK */
+
+
+/* RT03 identity / account management — keep Material You red-white. */
+.rt03-profile-login-id{
+  margin-top:8px!important;color:#ffe2e4!important;font-size:13px!important;
+  letter-spacing:.02em;
+}
+.rt03-profile-login-id strong{color:#fff;font-weight:800;letter-spacing:.07em}
+.rt03-member-login-id{margin-top:7px;font-size:11px;font-weight:800;color:#bd2c42;letter-spacing:.025em}
+.rt03-people-actions{display:flex;justify-content:flex-end;margin-bottom:18px}
+.rt03-account-directory{margin-top:26px;margin-bottom:30px}
+.rt03-account-guidance{
+  font-size:12px;line-height:1.7;color:#64778a;
+  padding:0 24px 16px;max-width:900px;
+}
+.rt03-account-code{color:#b72539;font-weight:800;letter-spacing:.025em;white-space:nowrap}
+.rt03-account-badge{
+  display:inline-block;margin-left:5px;margin-top:4px;padding:4px 7px;
+  font-size:9px;border-radius:7px;background:#fff0f1;color:#b6253b;font-weight:800;
+}
+.rt03-account-reset{max-width:350px}
+.rt03-account-reset summary{cursor:pointer;color:#b72539;font-size:12px;font-weight:800}
+.rt03-account-reset-form{
+  width:min(310px,75vw);margin-top:12px;padding:14px;border-radius:14px;
+  border:1px solid #e9eef2;background:#fff;
+}
+.rt03-account-reset-explain{color:#637486;font-size:11px;line-height:1.65}
+.rt03-account-reset-form .field>span{font-size:11px}
+.rt03-account-reset-form .rt03-profile-password-field input{min-width:0;width:100%}
+.rt03-account-reset-form .btn{margin-top:4px}
+@media(max-width:650px){
+  .rt03-account-guidance{padding:0 14px 12px}
+  .rt03-account-reset-form{width:min(275px,75vw)}
+}
+
+/* Optional licensed instrumental — visible on the first landing hero. */
+.rt03-anthem-player{
+  display:flex;align-items:center;gap:11px;
+  width:min(100%,460px);padding:12px 13px;
+  margin:21px 0 12px;border:1px solid rgba(181,28,50,.19);
+  border-radius:17px;background:rgba(255,255,255,.72);
+  box-shadow:0 5px 18px rgba(114,41,49,.05);backdrop-filter:blur(8px);
+}
+.rt03-anthem-icon{
+  width:39px;height:39px;flex:none;display:grid;place-items:center;
+  border-radius:12px;color:#c5283e;background:#fff1f2;
+}
+.rt03-anthem-icon svg{width:18px;height:18px}
+.rt03-anthem-caption{flex:1;min-width:0;display:grid;gap:3px}
+.rt03-anthem-caption strong{font-size:12px;font-weight:800;color:#24364b}
+.rt03-anthem-caption span{font-size:10px;line-height:1.4;color:#7f7180}
+.rt03-anthem-toggle{
+  display:flex;gap:7px;align-items:center;justify-content:center;
+  border:0;border-radius:11px;min-height:38px;padding:9px 12px;
+  color:#fff;background:#c7253b;font-size:11px;font-weight:800;cursor:pointer;
+}
+.rt03-anthem-toggle svg{width:14px;height:14px}
+.rt03-anthem-toggle:hover{background:#ad1f32}
+.rt03-anthem-toggle:focus-visible{outline:3px solid #f8b4bf;outline-offset:2px}
+.rt03-anthem-player.is-playing .rt03-anthem-icon{
+  box-shadow:0 0 0 4px rgba(204,41,59,.12);
+}
+.rt03-anthem-unavailable{font-size:10px;color:#a66370;font-weight:700}
+@media(max-width:540px){.rt03-anthem-player{gap:9px;padding:10px;border-radius:13px}}
+@media(prefers-reduced-motion:reduce){.rt03-anthem-toggle{transition:none!important}}
