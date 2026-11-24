@@ -132,7 +132,9 @@ class DemoRoleAccountsSeederTest extends TestCase
 
         try {
             $this->app['env'] = 'production';
-            $this->seed(DemoRoleAccountsSeeder::class);
+            // Directly execute seeder to test the guard without Artisan's
+            // interactive production db:seed confirmation prompt.
+            app(DemoRoleAccountsSeeder::class)->run();
         } catch (RuntimeException $exception) {
             $thrown = true;
             $this->assertStringContainsString('Production ditolak', $exception->getMessage());
