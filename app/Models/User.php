@@ -17,6 +17,15 @@ class User extends Authenticatable
         return ['email_verified_at'=>'datetime','password'=>'hashed','is_active'=>'boolean','is_super_admin'=>'boolean'];
     }
 
+    /**
+     * Immutable, human-readable login ID derived from the existing primary
+     * key. Existing users need no migration, re-seeding, or credentials reset.
+     */
+    public function getLoginIdAttribute(): string
+    {
+        return 'RT03-'.str_pad((string) $this->getKey(), 6, '0', STR_PAD_LEFT);
+    }
+
     public function memberships()
     {
         return $this->hasMany(CommitteeMember::class);

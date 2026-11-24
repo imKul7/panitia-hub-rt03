@@ -26,6 +26,8 @@ Route::middleware('auth')->prefix('app')->group(function() {
     Route::get('/panitia',[PeopleController::class,'index'])->name('people.index');
     Route::post('/panitia',[PeopleController::class,'store'])->name('people.store');
     Route::post('/panitia/penugasan',[PeopleController::class,'assign'])->name('people.assign');
+    Route::patch('/panitia/akun/{user}/reset-password',[\App\Http\Controllers\AdminPasswordController::class,'update'])
+        ->middleware('throttle:10,1')->name('people.password.reset');
     Route::get('/tugas',[TaskController::class,'index'])->name('tasks.index');
     Route::post('/tugas',[TaskController::class,'store'])->name('tasks.store');
     Route::patch('/tugas/{task}',[TaskController::class,'update'])->name('tasks.update');

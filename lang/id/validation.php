@@ -54,6 +54,7 @@ return [
     'before' => ':attribute harus lebih awal dari :date.',
     'after' => ':attribute harus setelah :date.',
     'attributes' => [
+        'login_id' => 'ID login',
         'name'=>'nama','full_name'=>'nama lengkap','title'=>'judul','content'=>'isi',
         'description'=>'deskripsi','email'=>'alamat email','password'=>'kata sandi',
         'password_confirmation'=>'konfirmasi kata sandi','current_password'=>'kata sandi saat ini',

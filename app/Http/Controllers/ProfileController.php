@@ -41,7 +41,7 @@ class ProfileController extends Controller
 
         $data = $request->validate([
             'current_password' => ['required', 'current_password'],
-            'password' => ['required', 'string', 'min:12', 'confirmed'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
         auth()->user()->update(['password' => $data['password']]);
