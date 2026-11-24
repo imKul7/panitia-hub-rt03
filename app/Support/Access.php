@@ -11,9 +11,24 @@ final class Access
         if (!$user || !$user->is_active) return false;
         if ($user->is_super_admin) return true;
 
-        $period = Workspace::period();
-        $memberships = $user->memberships()->with('division')
-            ->where('event_period_id', $period->id)->where('is_active', true)->get();
+        // Permission checks run many times while rendering tables/sidebar.
+        // Reuse membership context inside this HTTP request only. NEVER cache
+        // it across requests: new role assignments and revocations must take
+        // effect on the very next response.
+        $request = request();
+        $period = $request->attributes->get('rt03.access.period');
+        if (!$period instanceof \App\Models\EventPeriod) {
+            $period = Workspace::period();
+            $request->attributes->set('rt03.access.period', $period);
+        }
+        $key = $period->getKey().':'.$user->getKey();
+        $cache = $request->attributes->get('rt03.access.memberships', []);
+        if (!array_key_exists($key, $cache)) {
+            $cache[$key] = $user->memberships()->with('division')
+                ->where('event_period_id', $period->id)->where('is_active', true)->get();
+            $request->attributes->set('rt03.access.memberships', $cache);
+        }
+        $memberships = $cache[$key];
         if ($memberships->isEmpty()) return false;
         $roles = $memberships->pluck('role')->all();
         $has = fn(array $allowed) => count(array_intersect($allowed, $roles)) > 0;
