@@ -2198,3 +2198,271 @@
   .rt03-loading-wave{bottom:48%!important;transform:none!important}
   .public-body .rt03-scroll-depth{scale:1!important;rotate:none!important}
 }
+
+
+/* ================================================================
+   PANITIA HUB RT 03 — compact red-white workspace system, 2027.
+   Shared design for ALL authenticated roles and internal modules.
+   Preserves existing GSAP, Lenis, modal, audio and authorization.
+   ================================================================ */
+.app-body{
+  --rt03-ui-red:#c52139;
+  --rt03-ui-red-dark:#a81930;
+  --rt03-ui-border:#f0e2e4;
+  background:#faf9f9;
+  color:#253548;
+}
+.app-body .app-sidebar{
+  background:#fff;
+  border-right:1px solid #f0e4e6;
+  padding-top:17px;padding-bottom:14px;
+}
+.app-body .app-brand{
+  margin-bottom:13px;padding-bottom:16px;
+  border-bottom:1px solid #f3e8ea;
+}
+.app-body .app-topbar{
+  border-bottom-color:#f2e4e6;
+  box-shadow:0 1px 0 #fff;
+}
+.app-body .page-content{
+  padding-top:clamp(22px,2.6vw,31px);
+}
+.app-body .page-head{margin-bottom:20px;gap:15px}
+.app-body .page-head h1{
+  margin:5px 0 4px;
+  color:#223449;
+  font-size:clamp(25px,2.4vw,34px);
+  letter-spacing:-.048em;
+}
+.app-body .page-head p{color:#788392;font-size:12px;line-height:1.55;max-width:680px}
+.app-body .eyebrow{color:#b13c4c;font-size:10px;letter-spacing:.11em}
+.app-body .surface-panel,.app-body .metric-card,
+.app-body .person-card,.app-body .competition-card,
+.app-body .inventory-card,.app-body .prize-card,
+.app-body .rt03-profile-panel{
+  border-color:#f0e5e6;
+  box-shadow:0 3px 15px rgba(84,49,55,.045);
+  background:#fff;
+}
+.app-body .panel-heading{padding:17px 20px 13px}
+.app-body .panel-list{padding:0 20px 15px}
+.app-body .panel-heading h2{font-size:16px;letter-spacing:-.025em}
+.app-body .table-panel{border-radius:16px}
+.app-body .data-table th{
+  background:#fff9f9;border-color:#f4e8ea;
+  color:#a45a65;letter-spacing:.08em;
+  padding:11px 14px;
+}
+.app-body .data-table td{padding:11px 14px;border-bottom-color:#f4edef}
+.app-body .data-table tr:last-child td{border-bottom:0}
+.app-body .page-head .btn,.app-body .btn-red{border-radius:11px}
+.app-body .btn-navy{
+  background:#bd263c;color:#fff;border-color:#bd263c;
+}
+.app-body .btn-navy:hover{background:#a51d34;border-color:#a51d34;color:#fff}
+.app-body .field input:focus,.app-body .field textarea:focus,
+.app-body .field select:focus{border-color:#d2495c;outline-color:#efb3bc}
+.app-body .modal-dialog{
+  background:#fff;border:1px solid #f1e0e3;
+  border-radius:20px;box-shadow:0 22px 68px rgba(64,41,46,.18);
+}
+.app-body .modal-heading{
+  padding:21px 25px 17px;border-bottom:1px solid #f1e4e6;
+}
+.app-body .modal-content{padding:21px 25px 23px}
+.app-body .form-stack{gap:13px}
+.app-body .form-hint{color:#8b7a82;font-size:11px;line-height:1.5}
+.app-body .notice{border-radius:13px}
+.app-body .sidebar-overline{
+  padding:8px 13px 6px;margin:0;
+  font-size:9px;color:#ae6370;
+}
+.app-body .sidebar-nav{gap:2px;padding:0 2px 3px}
+.app-body .sidebar-link{
+  min-height:40px;gap:10px;padding:7px 10px;
+  border-radius:10px;color:#66768a;font-size:12px;
+  font-weight:700;
+}
+.app-body .sidebar-link:hover{background:#fff4f4;color:#a9253c;transform:none}
+.app-body .sidebar-link.active{
+  background:#fff0f1;color:#b52139;
+  box-shadow:inset 3px 0 0 #c52139;
+}
+.app-body .sidebar-icon{flex:0 0 21px}
+.rt03-sidebar-link-content{
+  display:flex;flex-direction:column;gap:2px;min-width:0;
+}
+.rt03-sidebar-link-content>span{
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.rt03-sidebar-link-content small{
+  color:#98a1ac;font-size:9px;font-weight:500;
+  line-height:1.15;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;
+}
+.app-body .sidebar-link.active small{color:#ad6470}
+.rt03-role-identity{
+  display:grid;gap:5px;
+  padding:12px 14px;margin:0 2px 12px;
+  border:1px solid #f2e1e4;border-radius:14px;
+  background:linear-gradient(118deg,#fff3f4,#fffafa);
+}
+.rt03-role-identity-kicker{
+  display:flex;align-items:center;gap:6px;
+  font-size:9px;letter-spacing:.09em;font-weight:800;color:#bf2a42;
+}
+.rt03-role-identity-kicker svg{height:13px;width:13px}
+.rt03-role-identity strong{
+  font-size:12px;line-height:1.4;color:#25354b;font-weight:800;
+  overflow-wrap:anywhere;
+}
+.rt03-role-identity>span:last-child{
+  font-size:10px;line-height:1.45;color:#8a747c;
+}
+.rt03-sidebar-more{
+  display:block;border-top:1px solid #f2e6e8;
+  padding-top:9px;margin-top:9px;
+}
+.rt03-sidebar-more-trigger{
+  display:flex;align-items:center;gap:9px;
+  padding:10px 12px;border-radius:10px;
+  color:#a04a5a;font-size:11px;font-weight:800;
+  background:#fff9f9;cursor:pointer;user-select:none;
+  list-style:none;
+}
+.rt03-sidebar-more-trigger::-webkit-details-marker{display:none}
+.rt03-sidebar-more-trigger>svg:first-child{width:16px;height:16px}
+.rt03-sidebar-more-trigger:hover{background:#fff0f2}
+.rt03-sidebar-more-count{
+  margin-left:auto;border-radius:6px;padding:2px 6px;
+  color:#a23c50;background:#f7e5e8;font-size:10px;
+}
+.rt03-sidebar-more-chevron{width:15px;height:15px;transition:transform .18s}
+.rt03-sidebar-more[open] .rt03-sidebar-more-chevron{transform:rotate(180deg)}
+.rt03-sidebar-more-items{display:grid;gap:2px;padding:6px 0 1px 6px}
+.app-body .sidebar-bottom{
+  margin-top:9px;padding:10px 12px;
+  background:#fcf5f6;
+}
+.app-body .sidebar-bottom strong{color:#75384a}
+.app-body .sidebar-bottom small{color:#a27d86}
+.app-body .dashboard-banner{
+  background:linear-gradient(114deg,#fff4f3 1%,#ffd7d5 58%,#f9acae 100%);
+  border:1px solid #f6d0d0;
+  color:#26364a;min-height:170px;
+  padding:24px 29px;margin-bottom:18px;
+  box-shadow:none;
+}
+.app-body .dashboard-banner::after{border-color:#c9273820}
+.app-body .dashboard-banner .banner-label{color:#b12a40}
+.app-body .dashboard-banner h2{color:#26364a;font-size:clamp(23px,2.6vw,33px)}
+.app-body .dashboard-banner .banner-meta{color:#a15a63}
+.app-body .dashboard-banner .banner-number{color:#c41f2b23}
+.app-body .dashboard-banner .banner-number span{color:#b9223b70}
+.app-body .metric-grid{gap:13px;margin-bottom:19px}
+.app-body .metric-card{
+  border-radius:16px;min-height:144px;padding:17px 19px;
+}
+.app-body .metric-card:hover{box-shadow:0 10px 25px #ae6b7518}
+.app-body .rt03-profile-hero{
+  background:linear-gradient(120deg,#b51c36 0%,#d62b43 60%,#f16c71 100%);
+  box-shadow:0 10px 27px rgba(165,40,58,.12);
+}
+.app-body .rt03-profile-hero::before{background:linear-gradient(90deg,#fff,#ffd5c5,#b81231)}
+.app-body .rt03-profile-panel{border-radius:17px}
+.app-body .rt03-profile-panel-head{margin-bottom:18px}
+
+/* Compact account directory: keep each account as ONE short row.
+   The reset form opens a native Alpine modal instead of expanding the table. */
+.rt03-account-directory{
+  margin:20px 0 28px;
+  border-radius:17px;overflow:hidden;
+}
+.rt03-account-compact-header{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:12px;padding:15px 18px;border-bottom:1px solid #f0e4e6;
+}
+.rt03-account-compact-title{display:flex;align-items:center;gap:12px;min-width:0}
+.rt03-account-compact-title>div{min-width:0}
+.rt03-account-compact-icon{
+  width:38px;height:38px;display:grid;place-items:center;
+  border-radius:11px;background:#fff0f2;color:#bf263f;flex:0 0 auto;
+}
+.rt03-account-compact-icon svg{width:19px;height:19px}
+.rt03-account-compact-header h2{
+  font-size:15px;letter-spacing:-.025em;margin:3px 0;
+  color:#26384e;
+}
+.rt03-account-compact-header p{
+  margin:0;font-size:10px;color:#8a7982;line-height:1.4;
+}
+.rt03-account-total{
+  border-radius:9px;background:#fff1f2;color:#b82e46;
+  font-size:11px;font-weight:800;padding:6px 10px;white-space:nowrap;
+}
+.app-body .rt03-account-table{font-size:11px;white-space:normal}
+.app-body .rt03-account-table th{font-size:9px}
+.app-body .rt03-account-table td{
+  vertical-align:middle;padding:9px 13px;line-height:1.3;
+}
+.rt03-account-table td>strong{font-size:12px;color:#26364c}
+.rt03-account-table .table-subtext{color:#8b94a0;font-size:10px;margin-top:4px;overflow-wrap:anywhere}
+.rt03-account-role{
+  display:inline-block;font-size:10px;line-height:1.4;
+  color:#58687c;max-width:250px;white-space:normal;
+}
+.rt03-account-role + .rt03-account-role{margin-left:6px}
+.rt03-account-role--muted{color:#9ca5af}
+.rt03-account-status{
+  display:inline-flex;align-items:center;gap:5px;
+  border-radius:8px;padding:5px 9px;font-size:10px;font-weight:800;
+}
+.rt03-account-status.is-active{background:#eaf6ee;color:#258252}
+.rt03-account-status.is-inactive{background:#f4eeee;color:#995a63}
+.rt03-account-status::before{
+  content:"";width:5px;height:5px;border-radius:50%;background:currentColor;
+}
+.rt03-account-reset-trigger{
+  min-height:32px;padding:7px 11px;font-size:11px;
+  box-shadow:none;white-space:nowrap;
+}
+.rt03-account-reset-trigger svg{width:13px;height:13px}
+.rt03-account-self-link{
+  color:#ae293e;font-weight:800;font-size:11px;text-decoration:none;
+}
+.rt03-account-self-link:hover{text-decoration:underline}
+.rt03-compact-pagination{padding:10px 15px}
+.app-body .people-grid{gap:11px}
+.app-body .person-card{
+  min-height:112px;gap:12px;padding:16px;
+  border-radius:15px;
+}
+.app-body .person-avatar{width:43px;height:43px;font-size:18px;border-radius:12px}
+.app-body .person-card h2{font-size:14px;margin:4px 0 3px}
+.app-body .person-card p{font-size:11px;margin:0}
+.app-body .person-card .rt03-member-login-id{color:#b3213a;margin-top:5px;font-size:10px}
+.app-body .person-card .delete-form .btn{font-size:10px}
+.app-body .rt03-people-actions{margin-bottom:14px}
+
+@media(max-width:880px){
+  .app-body .app-sidebar{width:min(290px,86vw)}
+  .app-body .page-content{padding-top:19px}
+  .app-body .rt03-account-table td{padding:9px 12px}
+}
+@media(max-width:630px){
+  .app-body .page-head{gap:11px}
+  .app-body .modal-heading{padding:18px 17px 13px}
+  .app-body .modal-content{padding:17px}
+  .app-body .dashboard-banner{padding:21px;border-radius:17px}
+  .app-body .rt03-account-directory .table-scroll{overflow-x:auto}
+  .app-body .rt03-account-table{min-width:650px}
+  .rt03-account-compact-header{padding:13px 14px}
+  .rt03-account-compact-header h2{font-size:13px}
+  .rt03-account-compact-header p{font-size:9px}
+  .rt03-account-compact-icon{width:34px;height:34px}
+  .app-body .person-card{min-height:100px}
+}
+@media(prefers-reduced-motion:reduce){
+  .rt03-sidebar-more-chevron{transition:none}
+}
