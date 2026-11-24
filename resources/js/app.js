@@ -219,13 +219,24 @@ function rt03ClearAvatarObjectUrl() {
   }
 }
 window.addEventListener('pagehide', rt03ClearAvatarObjectUrl);
-document.addEventListener('rt03:workspace:before-swap', rt03ClearAvatarObjectUrl);
+document.addEventListener('rt03:workspace:before-swap', () => {
+  rt03ClearAvatarObjectUrl();
+  if (!reduceMotion) {
+    // Discard ScrollTriggers for the detached page. Without this, visiting
+    // many menus accumulates listeners and forces repeated layout work.
+    ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+  }
+});
 document.addEventListener('rt03:workspace:after-swap', () => {
   activateIcons();
   rt03InitWorkspaceForms();
   document.querySelectorAll('form[data-rt03-confirm] button[type="submit"]').forEach(button => {
     button.disabled = false;
   });
+  if (!reduceMotion) {
+    rt03AnimateReveals(document.querySelector('.app-main > main.page-content'), true);
+    ScrollTrigger.refresh();
+  }
   window.rt03WorkspaceLenis?.resize();
 });
 
