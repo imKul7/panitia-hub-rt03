@@ -45,10 +45,20 @@
     <main class="page-content">
       @if(session('success'))<div role="status" class="notice notice-success"><i data-lucide="check-circle-2"></i><span>{{session('success')}}</span></div>@endif
       @if($errors->any())<div role="alert" class="notice notice-error"><i data-lucide="alert-circle"></i><div><strong>Periksa kembali formulir.</strong><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div></div>@endif
+      @if(is_array(session('rt03_rejection')))<div role="alert" class="notice notice-error">
+        <i data-lucide="alert-circle" aria-hidden="true"></i>
+        <div><strong>{{ session('rt03_rejection.title', 'Tindakan belum dapat diproses') }}</strong>
+          <p>{{ session('rt03_rejection.reason', 'Permintaan ditolak oleh sistem.') }}</p>
+          <p><strong>Saran:</strong> {{ session('rt03_rejection.suggestion', 'Periksa data dan izin akun.') }}</p>
+        </div>
+      </div>@endif
       @yield('content')
     </main>
     <footer class="app-footer">PANITIA HUB RT 03 <span>•</span> Dikelola bersama, diteruskan bersama.</footer>
   </div>
+
+    {{-- Validasi lintas halaman dan semua role: modal terpusat. --}}
+    <x-form-feedback />
 
     {{-- Dialog konfirmasi terpusat: submit asli tetap melalui route, CSRF, dan policy Laravel. --}}
     <dialog class="rt03-confirm-dialog"

@@ -44,6 +44,7 @@ jobs:
         run: |
           node --check resources/js/public-navigation.js
           node --check resources/js/workspace-navigation.js
+          node --check resources/js/validation-feedback.js
       - name: Vite production build
         run: npm run build
       - name: Laravel feature and unit tests (SQLite in-memory)
