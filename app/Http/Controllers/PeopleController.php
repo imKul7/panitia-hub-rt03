@@ -23,6 +23,10 @@ class PeopleController extends Controller
         // hashes or remember tokens are selected or serialized to the view.
         $accounts = auth()->user()->is_super_admin
             ? User::query()->select(['id','name','email','is_active','is_super_admin'])
+                ->with(['memberships' => fn ($query) => $query
+                    ->where('event_period_id', $period->id)
+                    ->where('is_active', true)
+                    ->with('division')])
                 ->orderBy('id')->paginate(20, ['*'], 'accounts_page')
             : null;
         return view('panitia.people',compact('period','members','divisions','users','accounts'));
@@ -46,7 +50,7 @@ class PeopleController extends Controller
         $user=User::create(['name'=>$data['name'],'email'=>$data['email'],'password'=>$data['password'],'is_active'=>true]);
         CommitteeMember::create(['user_id'=>$user->id,'event_period_id'=>$period->id,'division_id'=>$data['division_id'],'role'=>$data['role'],'position_title'=>ucwords(str_replace('_',' ',$data['role']))]);
         Workspace::log('member.created','Akun panitia dibuat: '.$user->name,$user->id,'user');
-        return back()->with('success','Akun panitia dibuat. ID login: '.$user->login_id.'. Berikan ID dan kata sandi awal secara pribadi.');
+        return back()->with('success','Akun dibuat · ID: '.$user->login_id.'. Bagikan kredensial secara pribadi.');
     }
 
     public function assign(Request $request)

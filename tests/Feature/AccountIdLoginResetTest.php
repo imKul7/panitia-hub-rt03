@@ -41,7 +41,7 @@ class AccountIdLoginResetTest extends TestCase
     public function test_each_existing_database_user_has_stable_formatted_login_id(): void
     {
         $user = $this->user('Anggota Awal');
-        $expected = 'RT03-'.str_pad((string) $user->id, 6, '0', STR_PAD_LEFT);
+        $expected = 'RT03-'.str_pad((string) $user->id, 2, '0', STR_PAD_LEFT);
         $this->assertSame($expected, $user->login_id);
         $this->assertSame($expected, $user->fresh()->login_id);
         $this->assertSame($user->id, User::findOrFail($user->id)->id);
@@ -61,6 +61,20 @@ class AccountIdLoginResetTest extends TestCase
         ])->assertRedirect(route('dashboard'));
 
         $this->assertAuthenticatedAs($admin);
+    }
+
+    public function test_old_six_digit_id_still_authenticates_during_transition(): void
+    {
+        $admin = $this->user('Legacy Login', 'adminPass88', true);
+        $legacyId = 'RT03-'.str_pad((string) $admin->id, 6, '0', STR_PAD_LEFT);
+
+        $this->post('/login', [
+            'login_id' => $legacyId,
+            'password' => 'adminPass88',
+        ])->assertRedirect(route('dashboard'));
+
+        $this->assertAuthenticatedAs($admin);
+        $this->assertSame('RT03-'.str_pad((string) $admin->id, 2, '0', STR_PAD_LEFT), $admin->login_id);
     }
 
     public function test_login_rejects_wrong_id_wrong_password_and_legacy_email_submission(): void

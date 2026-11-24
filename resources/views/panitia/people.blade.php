@@ -4,17 +4,17 @@
 <div class="page-head">
   <div>
     <span class="eyebrow">ORGANISASI / PERIODE {{ $period->year }}</span>
-    <h1>Orang-orang di balik layar<span class="text-red">.</span></h1>
-    <p>Setiap akun punya ID login unik. Jabatan, divisi, dan akses tetap mengikuti periode aktif.</p>
+    <h1>Struktur panitia<span class="text-red">.</span></h1>
+    <p>Anggota, jabatan, dan akses periode {{ $period->year }}.</p>
   </div>
   @if(\App\Support\Access::can(auth()->user(),'manage-members'))
   <x-entry-modal title="Tambah akun panitia" label="Tambah panitia">
     <form method="post" action="{{ route('people.store') }}" class="form-stack">
       @csrf
       <label class="field"><span>Nama lengkap</span><input name="name" value="{{ old('name') }}" required maxlength="120"></label>
-      <label class="field"><span>Email (untuk informasi akun)</span><input type="email" name="email" value="{{ old('email') }}" required maxlength="190"></label>
+      <label class="field"><span>Email</span><input type="email" name="email" value="{{ old('email') }}" required maxlength="190"></label>
       <label class="field">
-        <span>Kata sandi awal (minimal 8 karakter)</span>
+        <span>Password awal (min. 8 karakter)</span>
         <span class="rt03-profile-password-field">
           <input type="password" name="password" minlength="8" required autocomplete="new-password">
           <button type="button" data-toggle-password aria-label="Tampilkan kata sandi" aria-pressed="false" title="Lihat kata sandi"><i data-lucide="eye" aria-hidden="true"></i></button>
@@ -26,12 +26,12 @@
           <option value="{{ $role }}" @selected(old('role')===$role)>{{ $label }}</option>
           @endforeach
         </select></label>
-        <label class="field"><span>Divisi (wajib untuk koordinator / anggota)</span><select name="division_id">
+        <label class="field"><span>Divisi (koordinator/anggota)</span><select name="division_id">
           <option value="">Tanpa divisi</option>
           @foreach($divisions as $division)<option value="{{ $division->id }}" @selected((string)old('division_id')===(string)$division->id)>{{ $division->name }}</option>@endforeach
         </select></label>
       </div>
-      <p class="form-hint">ID Login dibuat otomatis setelah akun disimpan. Berikan ID dan kata sandi awal secara pribadi; kata sandi asli tidak dapat dilihat kembali oleh admin.</p>
+      <p class="form-hint">ID RT03 dibuat otomatis. Bagikan ID dan password secara pribadi.</p>
       <button type="submit" class="btn btn-red btn-block">Buat akun</button>
     </form>
   </x-entry-modal>
@@ -83,52 +83,82 @@
 </div>
 
 @if(auth()->user()->is_super_admin && $accounts)
-<section class="surface-panel table-panel rt03-account-directory">
-  <div class="panel-heading">
-    <div><span class="eyebrow">HANYA SUPER ADMIN</span><h2>Manajemen akun & reset kata sandi</h2></div>
-    <span class="muted-small">{{ $accounts->total() }} akun terdaftar</span>
+<section class="surface-panel rt03-account-directory" aria-labelledby="rt03-accounts-title">
+  <div class="rt03-account-compact-header">
+    <div class="rt03-account-compact-title">
+      <span class="rt03-account-compact-icon" aria-hidden="true"><i data-lucide="shield-check"></i></span>
+      <div>
+        <span class="eyebrow">SUPER ADMIN</span>
+        <h2 id="rt03-accounts-title">Manajemen akun & reset kata sandi</h2>
+        <p>ID otomatis · Password tersimpan aman · Reset oleh Super Admin</p>
+      </div>
+    </div>
+    <span class="rt03-account-total">{{ $accounts->total() }} akun</span>
   </div>
-  <p class="rt03-account-guidance">Semua akun memiliki ID login dan email. Password asli tidak dapat dilihat karena disimpan sebagai hash. Super Admin dapat menetapkan password baru setelah mengonfirmasi kata sandinya sendiri.</p>
-  <div class="table-scroll"><table class="data-table">
-    <thead><tr><th>ID LOGIN</th><th>NAMA / EMAIL</th><th>STATUS</th><th>KEAMANAN AKUN</th></tr></thead>
-    <tbody>
-      @foreach($accounts as $account)
-      <tr>
-        <td><strong class="rt03-account-code">{{ $account->login_id }}</strong></td>
-        <td><strong>{{ $account->name }}</strong><span class="table-subtext">{{ $account->email }}</span></td>
-        <td><span class="status {{ $account->is_active ? 'status-done' : 'status-blocked' }}">{{ $account->is_active ? 'Aktif' : 'Nonaktif' }}</span>@if($account->is_super_admin)<span class="rt03-account-badge">SUPER ADMIN</span>@endif</td>
-        <td>
-          @if($account->id === auth()->id())
-            <span class="muted-small">Akun sendiri: ganti melalui Profil Saya</span>
-          @else
-            <details class="inline-details rt03-account-reset">
-              <summary>Reset kata sandi</summary>
-              <form method="post" action="{{ route('people.password.reset', $account) }}" class="form-stack rt03-account-reset-form">
-                @csrf
-                @method('PATCH')
-                <p class="rt03-account-reset-explain">Mengganti kata sandi <strong>{{ $account->login_id }}</strong>. Akun tersebut perlu login kembali jika masih aktif di perangkat lain.</p>
-                <label class="field"><span>Kata sandi Super Admin saat ini</span><span class="rt03-profile-password-field">
-                  <input type="password" name="current_password" required autocomplete="current-password">
-                  <button type="button" data-toggle-password aria-label="Tampilkan kata sandi" aria-pressed="false" title="Lihat kata sandi"><i data-lucide="eye" aria-hidden="true"></i></button>
-                </span></label>
-                <label class="field"><span>Kata sandi baru (minimal 8 karakter)</span><span class="rt03-profile-password-field">
-                  <input type="password" name="password" required minlength="8" autocomplete="new-password">
-                  <button type="button" data-toggle-password aria-label="Tampilkan kata sandi" aria-pressed="false" title="Lihat kata sandi"><i data-lucide="eye" aria-hidden="true"></i></button>
-                </span></label>
-                <label class="field"><span>Konfirmasi kata sandi baru</span><span class="rt03-profile-password-field">
-                  <input type="password" name="password_confirmation" required minlength="8" autocomplete="new-password">
-                  <button type="button" data-toggle-password aria-label="Tampilkan kata sandi" aria-pressed="false" title="Lihat kata sandi"><i data-lucide="eye" aria-hidden="true"></i></button>
-                </span></label>
-                <button type="submit" class="btn btn-red btn-small">Simpan password baru</button>
-              </form>
-            </details>
-          @endif
-        </td>
-      </tr>
-      @endforeach
-    </tbody>
-  </table></div>
-  <div class="pagination-row">{{ $accounts->links() }}</div>
+  <div class="table-scroll">
+    <table class="data-table rt03-account-table">
+      <thead><tr><th>ID</th><th>Akun</th><th>Peran aktif</th><th>Status</th><th>Aksi</th></tr></thead>
+      <tbody>
+        @foreach($accounts as $account)
+          <tr>
+            <td><span class="rt03-account-code">{{ $account->login_id }}</span></td>
+            <td>
+              <strong>{{ $account->name }}</strong>
+              <span class="table-subtext">{{ $account->email }}</span>
+            </td>
+            <td>
+              @if($account->is_super_admin)
+                <span class="rt03-account-badge">Super Admin</span>
+              @else
+                @forelse($account->memberships->take(2) as $member)
+                  <span class="rt03-account-role">{{ ucwords(str_replace('_',' ', $member->role)) }}@if($member->division) · {{ $member->division->name }}@endif</span>
+                @empty
+                  <span class="rt03-account-role rt03-account-role--muted">Belum ditugaskan</span>
+                @endforelse
+                @if($account->memberships->count() > 2)
+                  <span class="rt03-account-role rt03-account-role--muted">+{{ $account->memberships->count()-2 }} jabatan</span>
+                @endif
+              @endif
+            </td>
+            <td><span class="rt03-account-status {{ $account->is_active ? 'is-active' : 'is-inactive' }}">{{ $account->is_active ? 'Aktif' : 'Nonaktif' }}</span></td>
+            <td>
+              @if($account->id === auth()->id())
+                <a class="rt03-account-self-link" href="{{ route('profile.index') }}">Profil Saya</a>
+              @else
+                <x-entry-modal title="Reset password {{ $account->login_id }}"
+                               label="Reset" icon="key-round"
+                               button-class="btn btn-red btn-small rt03-account-reset-trigger">
+                  <form method="post" action="{{ route('people.password.reset', $account) }}" class="form-stack">
+                    @csrf @method('PATCH')
+                    <p class="form-hint">Akun: <strong>{{ $account->name }} · {{ $account->login_id }}</strong></p>
+                    <label class="field"><span>Password Super Admin</span>
+                      <span class="rt03-profile-password-field"><input type="password" name="current_password" autocomplete="current-password" required>
+                        <button type="button" data-toggle-password aria-label="Tampilkan kata sandi" aria-pressed="false"><i data-lucide="eye" aria-hidden="true"></i></button>
+                      </span>
+                    </label>
+                    <label class="field"><span>Password baru (min. 8 karakter)</span>
+                      <span class="rt03-profile-password-field"><input type="password" name="password" minlength="8" autocomplete="new-password" required>
+                        <button type="button" data-toggle-password aria-label="Tampilkan kata sandi" aria-pressed="false"><i data-lucide="eye" aria-hidden="true"></i></button>
+                      </span>
+                    </label>
+                    <label class="field"><span>Ulangi password baru</span>
+                      <span class="rt03-profile-password-field"><input type="password" name="password_confirmation" minlength="8" autocomplete="new-password" required>
+                        <button type="button" data-toggle-password aria-label="Tampilkan kata sandi" aria-pressed="false"><i data-lucide="eye" aria-hidden="true"></i></button>
+                      </span>
+                    </label>
+                    <button type="submit" class="btn btn-red btn-block">Simpan password</button>
+                  </form>
+                </x-entry-modal>
+              @endif
+            </td>
+          </tr>
+        @endforeach
+      </tbody>
+    </table>
+  </div>
+  @if($accounts->hasPages())
+  <div class="pagination-row rt03-compact-pagination">{{ $accounts->links() }}</div>
+  @endif
 </section>
 @endif
 @endsection
