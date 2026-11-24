@@ -2056,3 +2056,125 @@
 @media (prefers-reduced-motion:reduce) {
   .public-body .rt03-anthem-dock{transition:none!important}
 }
+
+
+/* ==============================================================
+   RT03 UI MOTION — Liquid Fill + Square Morph
+   Request feedback only: never blocks clicks or artificially
+   delays navigation. White, red and warm neutral Material You.
+   ============================================================== */
+.rt03-loading-overlay[hidden]{display:none!important}
+.rt03-loading-overlay{
+  position:fixed;inset:0;z-index:1900;pointer-events:none;
+  display:grid;place-items:center;padding:18px;
+  background:rgba(247,247,248,.62);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  animation:rt03-loading-appear .18s ease-out both;
+}
+.rt03-loading-panel{
+  width:min(290px,calc(100vw - 36px));
+  display:flex;flex-direction:column;align-items:center;gap:13px;
+  padding:26px 20px 22px;border-radius:25px;
+  background:linear-gradient(150deg,#fff 10%,#fff8f8 100%);
+  border:1px solid #f5dfe2;
+  box-shadow:0 24px 75px rgba(71,36,43,.15),0 5px 20px rgba(71,36,43,.06);
+  text-align:center;overflow:hidden;position:relative;
+}
+.rt03-loading-panel::before{
+  content:"";height:4px;position:absolute;top:0;left:0;right:0;
+  background:linear-gradient(90deg,#ba2136,#e6404c 52%,#ffb691);
+}
+.rt03-loading-eyebrow{
+  font-size:10px;letter-spacing:.16em;color:#758398;
+  font-weight:800;font-style:normal;
+}
+.rt03-loading-eyebrow em{font-style:normal;color:#c72b42}
+.rt03-loading-illustration{
+  display:grid;place-items:center;height:102px;width:102px;
+  border-radius:50%;background:#fff5f5;
+}
+.rt03-loading-square{
+  position:relative;display:block;width:63px;height:63px;
+  overflow:hidden;border:2px solid #d12a40;
+  background:#fff;box-shadow:0 6px 18px rgba(188,29,48,.16);
+  border-radius:17px;transform-origin:center;
+  animation:rt03-square-morph 1.8s cubic-bezier(.61,.04,.35,1) infinite;
+}
+.rt03-loading-liquid{
+  display:block;position:absolute;left:0;right:0;bottom:-1px;
+  height:18%;background:linear-gradient(0deg,#b71935 5%,#e83c4d 75%,#ff6671 100%);
+  animation:rt03-liquid-fill 1.8s ease-in-out infinite;
+}
+.rt03-loading-wave{
+  position:absolute;left:-50%;width:200%;height:18px;
+  background:rgba(255,133,142,.82);border-radius:50%;
+  bottom:12%;transform-origin:50% 70%;
+  animation:rt03-liquid-wave 1.8s ease-in-out infinite;
+}
+.rt03-loading-glint{
+  position:absolute;inset:10px auto auto 9px;width:13px;height:24px;
+  border-radius:50%;transform:rotate(-25deg);
+  background:rgba(255,255,255,.25);pointer-events:none;
+}
+.rt03-loading-title{color:#203248;font-size:13px;font-weight:800;line-height:1.5}
+.rt03-loading-hint{color:#9c8992;font-size:9px;font-weight:800;letter-spacing:.1em}
+@keyframes rt03-loading-appear{from{opacity:0}to{opacity:1}}
+@keyframes rt03-square-morph{
+  0%,100%{border-radius:16px 24px 16px 24px;transform:rotate(-7deg)}
+  33%{border-radius:32px 13px 32px 13px;transform:rotate(14deg)}
+  66%{border-radius:13px 33px 13px 33px;transform:rotate(-10deg)}
+}
+@keyframes rt03-liquid-fill{
+  0%,100%{height:19%}52%{height:82%}75%{height:98%}
+}
+@keyframes rt03-liquid-wave{
+  0%,100%{bottom:11%;transform:translateX(-13%) rotate(-6deg)}
+  52%{bottom:76%;transform:translateX(12%) rotate(8deg)}
+  75%{bottom:92%;transform:translateX(-3%) rotate(-8deg)}
+}
+
+/* --------------------------------------------------------------
+   RT03 3D Card Zoom on scroll — independent individual scale and
+   rotate properties preserve GSAP reveal transforms/Lenis scrolling.
+   Covers all resident pages, with subtle effects on mobile.
+   -------------------------------------------------------------- */
+.public-body #main,
+.public-body #main .feature-grid,
+.public-body #main .agenda-list,
+.public-body #main .notice-cards,
+.public-body #main .listing-grid,
+.public-body #main .gallery-grid,
+.public-body #main .public-hero,
+.public-body #main .public-neighborhood,
+.public-body #main .listing-hero{
+  perspective:1350px;
+  perspective-origin:50% 40%;
+}
+.public-body .rt03-scroll-depth{
+  scale:calc(var(--rt03-depth-scale, 1) + var(--rt03-depth-hover, 0));
+  rotate:x var(--rt03-depth-tilt, 0deg);
+  transform-origin:center 58%;
+  backface-visibility:hidden;
+  transform-style:preserve-3d;
+}
+@media(hover:hover) and (pointer:fine){
+  .public-body .rt03-scroll-depth.feature-tile:hover,
+  .public-body .rt03-scroll-depth.listing-card:hover,
+  .public-body .rt03-scroll-depth.gallery-card:hover,
+  .public-body .rt03-scroll-depth.agenda-row:hover,
+  .public-body .rt03-scroll-depth.notice-tile:hover,
+  .public-body .rt03-scroll-depth.feature-tile:focus-visible{
+    --rt03-depth-hover:.018;
+  }
+}
+@media(max-width:720px){
+  .public-body #main{perspective:1000px}
+}
+@media(prefers-reduced-motion:reduce){
+  .rt03-loading-overlay,.rt03-loading-square,.rt03-loading-liquid,
+  .rt03-loading-wave{animation:none!important}
+  .rt03-loading-square{border-radius:15px!important}
+  .rt03-loading-liquid{height:52%!important}
+  .rt03-loading-wave{bottom:48%!important;transform:none!important}
+  .public-body .rt03-scroll-depth{scale:1!important;rotate:none!important}
+}
