@@ -81,7 +81,7 @@ final class RoleMenu
             }
         }
 
-        $priorityKeys = ['dashboard', 'profile.index', 'archive.index'];
+        $priorityKeys = ['dashboard'];
         if ($user->is_super_admin) {
             $priorityKeys = array_merge($priorityKeys, ['people.index','tasks.index','finance.index','periods.index','expenses.index']);
         } elseif (in_array('mentor', $roles, true)) {
@@ -122,7 +122,10 @@ final class RoleMenu
             }
         }
 
-        $priorityKeys = array_unique($priorityKeys);
+        // Reference/archive/profile stay below work actions, not above them.
+        $priorityKeys = array_unique(array_merge($priorityKeys, [
+            'archive.index', 'profile.index',
+        ]));
         $primary = [];
         $more = [];
         foreach (self::ITEMS as $route => [$text, $icon, $hint]) {
