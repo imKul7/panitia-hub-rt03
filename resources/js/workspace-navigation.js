@@ -233,7 +233,7 @@ if (workspaceBody && workspaceSidebar && window.fetch && window.DOMParser
   document.addEventListener('submit', event => {
     const form = event.target;
     if (!(form instanceof HTMLFormElement)) return;
-    if (form.dataset.rt03Confirm && form.dataset.rt03Confirmed !== '1') return;
+    if (form.hasAttribute('data-rt03-confirm') && form.dataset.rt03Confirmed !== '1') return;
     if (form.dataset.rt03Submitting === '1') {
       event.preventDefault();
       return;
