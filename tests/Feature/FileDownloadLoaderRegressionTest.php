@@ -131,6 +131,6 @@ class FileDownloadLoaderRegressionTest extends TestCase
         ]);
 
         $this->actingAs($mentor)->get(route('finance.proof', $transaction))->assertForbidden();
-        $this->assertGuest() === false; // Unrelated session state is not modified by the download.
+        $this->assertAuthenticatedAs($mentor); // Rejected download must not log the user out.
     }
 }

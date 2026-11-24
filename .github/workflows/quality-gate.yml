@@ -48,6 +48,8 @@ jobs:
           node --check resources/js/validation-feedback.js
           node --check resources/js/loading-animation.js
           node --check resources/js/app.js
+      - name: Browserless loader behavior regression tests
+        run: node --test tests/js/loading-animation.test.cjs
       - name: Vite production build
         run: npm run build
       - name: Laravel feature and unit tests (SQLite in-memory)
