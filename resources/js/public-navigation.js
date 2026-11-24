@@ -132,11 +132,13 @@ if (rt03Body?.matches('[data-rt03-public-router]') && rt03Nav
       // Also cancels a previous pending navigation and restores the active tab.
       reflectCurrent(location.pathname);
       closeMobileMenu();
+      document.getElementById('main')?.removeAttribute('aria-busy');
       window.rt03PublicLenis?.scrollTo(0, { immediate: true, force: true });
       window.scrollTo(0, 0);
       return;
     }
     reflectPending(url.pathname);
+    document.getElementById('main')?.setAttribute('aria-busy', 'true');
     try {
       const html = await fetchPage(url);
       if (version !== requestVersion) return; // Ignore stale racing requests.
@@ -148,7 +150,10 @@ if (rt03Body?.matches('[data-rt03-public-router]') && rt03Nav
       if (mode === 'pop') location.reload();
       else location.assign(url.href);
     } finally {
-      if (version === requestVersion) reflectPending(null);
+      if (version === requestVersion) {
+        reflectPending(null);
+        document.getElementById('main')?.removeAttribute('aria-busy');
+      }
     }
   }
 
@@ -161,6 +166,7 @@ if (rt03Body?.matches('[data-rt03-public-router]') && rt03Nav
     const url = routeURL(link.href);
     if (!url) return;
     event.preventDefault();
+    closeMobileMenu(); // Respond instantly on mobile, even if fetch is pending.
     void navigate(url);
   });
 
