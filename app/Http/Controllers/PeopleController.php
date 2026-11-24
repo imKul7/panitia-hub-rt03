@@ -18,8 +18,14 @@ class PeopleController extends Controller
         $period = Workspace::period();
         $members = CommitteeMember::with(['user','division'])->where('event_period_id',$period->id)->where('is_active',true)->orderBy('role')->get();
         $divisions = Division::where('event_period_id',$period->id)->orderBy('name')->get();
-        $users = User::where('is_active',true)->orderBy('name')->get();
-        return view('panitia.people',compact('period','members','divisions','users'));
+        $users = User::where('is_active',true)->orderBy('name')->get(['id','name','email','is_active']);
+        // Full account directory is restricted to Super Admin; no password
+        // hashes or remember tokens are selected or serialized to the view.
+        $accounts = auth()->user()->is_super_admin
+            ? User::query()->select(['id','name','email','is_active','is_super_admin'])
+                ->orderBy('id')->paginate(20, ['*'], 'accounts_page')
+            : null;
+        return view('panitia.people',compact('period','members','divisions','users','accounts'));
     }
 
     public function store(Request $request)
@@ -29,7 +35,7 @@ class PeopleController extends Controller
         $data = $request->validate([
             'name'=>['required','string','max:120'],
             'email'=>['required','email','max:190','unique:users,email'],
-            'password'=>['required','string','min:12'],
+            'password'=>['required','string','min:8'],
             'role'=>['required',Rule::in(self::ROLES)],
             'division_id'=>['nullable','integer',Rule::exists('divisions','id')->where('event_period_id',$period->id)],
         ]);
@@ -40,7 +46,7 @@ class PeopleController extends Controller
         $user=User::create(['name'=>$data['name'],'email'=>$data['email'],'password'=>$data['password'],'is_active'=>true]);
         CommitteeMember::create(['user_id'=>$user->id,'event_period_id'=>$period->id,'division_id'=>$data['division_id'],'role'=>$data['role'],'position_title'=>ucwords(str_replace('_',' ',$data['role']))]);
         Workspace::log('member.created','Akun panitia dibuat: '.$user->name,$user->id,'user');
-        return back()->with('success','Akun panitia berhasil dibuat.');
+        return back()->with('success','Akun panitia dibuat. ID login: '.$user->login_id.'. Berikan ID dan kata sandi awal secara pribadi.');
     }
 
     public function assign(Request $request)
