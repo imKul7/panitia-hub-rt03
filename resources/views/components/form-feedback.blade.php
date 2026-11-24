@@ -56,7 +56,7 @@
     </div>
     <div class="rt03-feedback-actions">
       <button type="button" class="rt03-feedback-button rt03-feedback-secondary" data-rt03-feedback-close>Tutup</button>
-      <button type="button" class="rt03-feedback-button rt03-feedback-primary" data-rt03-feedback-edit>Perbaiki data</button>
+      <button type="button" class="rt03-feedback-button rt03-feedback-primary" data-rt03-feedback-edit>{{ is_array($rt03Rejection) && !$rt03Invalid ? 'Mengerti' : 'Perbaiki data' }}</button>
     </div>
     <p class="rt03-feedback-foot">RT 03 · BERSAMA, BERGERAK, BERKARYA</p>
   </div>

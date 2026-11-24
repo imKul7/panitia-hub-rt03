@@ -128,7 +128,7 @@ function setupDialog(dialog) {
       if (editing && targetForm) {
         // Alpine x-teleport retains the parent modal's reactive scope.
         const scope = window.Alpine?.$data?.(targetForm);
-        if (scope && Object.hasOwn(scope, 'open')) scope.open = true;
+        if (scope && 'open' in scope) scope.open = true;
         window.setTimeout(() => {
           if (field?.isConnected && typeof field.focus === 'function') {
             field.focus({ preventScroll: true });
@@ -176,6 +176,8 @@ function displayClientErrors(entries, form) {
     'Beberapa isian belum memenuhi ketentuan. Perbaiki kolom di bawah sebelum menyimpan.';
   dialog.querySelector('[data-rt03-feedback-suggestion]').textContent =
     'Pilih Perbaiki data, lengkapi kolom yang ditandai, lalu tekan Simpan kembali.';
+  const edit = dialog.querySelector('[data-rt03-feedback-edit]');
+  if (edit) edit.textContent = 'Perbaiki data';
   pendingFocus = { form, element: entries[0].element };
   showDialog(dialog);
 }

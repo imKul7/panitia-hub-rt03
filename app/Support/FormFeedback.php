@@ -54,6 +54,12 @@ final class FormFeedback
         if (str_contains($reason, 'sudah terdaftar') || str_contains($reason, 'sudah memiliki hasil')) {
             return 'Periksa data yang sudah tercatat sebelum membuat entri baru.';
         }
+        if (str_contains($reason, 'sudah diputuskan') || str_contains($reason, 'sudah ditetapkan')) {
+            return 'Muat ulang data terbaru. Jika butuh perubahan, gunakan prosedur koreksi atau hubungi ketua panitia.';
+        }
+        if (str_contains($reason, 'tidak boleh dihapus') || str_contains($reason, 'tidak dapat dihapus') || str_contains($reason, 'riwayat')) {
+            return 'Periksa hubungan data dan riwayatnya. Gunakan prosedur koreksi atau hubungi admin, bukan menghapus paksa.';
+        }
         if (str_contains($reason, 'jabatan') || str_contains($reason, 'pic ') || str_contains($reason, 'divisi tugas')) {
             return 'Pilih divisi dan panitia yang aktif, atau minta ketua panitia memperbarui struktur jabatan.';
         }
