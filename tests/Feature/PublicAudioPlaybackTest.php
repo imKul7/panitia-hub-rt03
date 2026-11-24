@@ -3,9 +3,19 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Database\Seeders\DatabaseSeeder;
 
 class PublicAudioPlaybackTest extends TestCase
 {
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(DatabaseSeeder::class);
+    }
+
     private function withAudioAsset(callable $assertions): void
     {
         $path = public_path('audio/indonesia-raya-instrumental.mp3');
