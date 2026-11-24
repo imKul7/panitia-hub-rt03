@@ -30,7 +30,7 @@
             <div class="rt03-profile-hero-intro">
                 <span class="rt03-profile-hero-role">{{ $primaryRole }}</span>
                 <h2 id="rt03-profile-name">{{ $user->name }}</h2>
-                <p>{{ $user->email }}</p>
+                <p>{{ $user->email }}</p><p class="rt03-profile-login-id">ID Login: <strong>{{ $user->login_id }}</strong></p>
             </div>
         </div>
         <div class="rt03-profile-hero-bottom">
@@ -181,14 +181,14 @@
                     <label class="field">
                         <span>Kata sandi baru</span>
                         <span class="rt03-profile-password-field">
-                            <input type="password" name="password" autocomplete="new-password" minlength="12" required placeholder="Minimal 12 karakter">
+                            <input type="password" name="password" autocomplete="new-password" minlength="8" required placeholder="Minimal 8 karakter">
                             <button type="button" data-toggle-password aria-label="Tampilkan kata sandi" aria-pressed="false"><i data-lucide="eye" aria-hidden="true"></i></button>
                         </span>
                     </label>
                     <label class="field">
                         <span>Konfirmasi kata sandi baru</span>
                         <span class="rt03-profile-password-field">
-                            <input type="password" name="password_confirmation" autocomplete="new-password" minlength="12" required>
+                            <input type="password" name="password_confirmation" autocomplete="new-password" minlength="8" required>
                             <button type="button" data-toggle-password aria-label="Tampilkan kata sandi" aria-pressed="false"><i data-lucide="eye" aria-hidden="true"></i></button>
                         </span>
                     </label>
