@@ -235,7 +235,10 @@ class PanitiaHubTest extends TestCase
         ] as $path) {
             $response = $this->get($path)->assertOk()
                 ->assertSee('rt03-independence-theme')
-                ->assertSee('@view-transition { navigation: auto; }', false);
+                ->assertSee('data-rt03-public-router', false)
+                ->assertSee('data-public-nav', false)
+                ->assertSee('id="main"', false)
+                ->assertDontSee('@view-transition { navigation: auto; }', false);
             if ($path !== '/') {
                 $response->assertSee('rt03-listing-hero');
             }
@@ -369,4 +372,31 @@ class PanitiaHubTest extends TestCase
                 && (int) $roles->first()->division_id === (int) Division::where('slug','hadiah')->value('id'))
             ->assertSee('Hadiah');
     }
+
+    public function test_all_six_public_routes_render_with_quick_navigation_contract(): void
+    {
+        $paths = [
+            '/', '/informasi/lomba', '/informasi/jadwal',
+            '/informasi/pengumuman', '/informasi/hasil', '/galeri',
+        ];
+        foreach ($paths as $path) {
+            $this->get($path, ['Accept' => 'text/html'])
+                ->assertOk()
+                ->assertSee('data-rt03-public-router', false)
+                ->assertSee('data-public-nav', false)
+                ->assertSee('id="main"', false)
+                ->assertSee('Beranda')
+                ->assertSee('Lomba')
+                ->assertSee('Jadwal')
+                ->assertSee('Pengumuman')
+                ->assertSee('Hasil')
+                ->assertSee('Galeri');
+        }
+
+        $this->get('/informasi/bukan-menu')->assertNotFound();
+        $this->get('/app')->assertRedirect('/login');
+        $this->get('/login')->assertOk()
+            ->assertDontSee('data-rt03-public-router', false);
+    }
+
 }
