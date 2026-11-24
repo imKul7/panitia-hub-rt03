@@ -42,7 +42,11 @@ class PublicController extends Controller
     public function gallery()
     {
         $period=$this->current();
-        $items=$period ? \App\Models\GalleryItem::where('event_period_id',$period->id)->where('is_published',true)->where('consent_confirmed',true)->latest()->get() : collect();
+        // Public galleries grow every year. Render a bounded page instead
+        // of retrieving every image entry in a single request.
+        $items = \App\Models\GalleryItem::where('event_period_id', $period?->id ?? -1)
+            ->where('is_published', true)->where('consent_confirmed', true)
+            ->latest()->paginate(24);
         return view('public.gallery',compact('period','items'));
     }
 }
