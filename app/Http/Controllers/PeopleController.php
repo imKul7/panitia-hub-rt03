@@ -6,7 +6,7 @@ use App\Models\{CommitteeMember, Division, User};
 use App\Support\{Access, Workspace};
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class PeopleController extends Controller
 {
@@ -47,9 +47,22 @@ class PeopleController extends Controller
             $request->validate(['division_id'=>['required']]);
         }
         if (!in_array($data['role'],['koordinator','anggota'],true)) $data['division_id']=null;
-        $user=User::create(['name'=>$data['name'],'email'=>$data['email'],'password'=>$data['password'],'is_active'=>true]);
-        CommitteeMember::create(['user_id'=>$user->id,'event_period_id'=>$period->id,'division_id'=>$data['division_id'],'role'=>$data['role'],'position_title'=>ucwords(str_replace('_',' ',$data['role']))]);
-        Workspace::log('member.created','Akun panitia dibuat: '.$user->name,$user->id,'user');
+        // A failed role assignment must never leave an orphaned active user.
+        // Account creation, membership assignment and audit log are atomic.
+        $user = DB::transaction(function () use ($data, $period): User {
+            $user = User::create([
+                'name' => $data['name'], 'email' => $data['email'],
+                'password' => $data['password'], 'is_active' => true,
+            ]);
+            CommitteeMember::create([
+                'user_id' => $user->id, 'event_period_id' => $period->id,
+                'division_id' => $data['division_id'], 'role' => $data['role'],
+                'position_title' => ucwords(str_replace('_', ' ', $data['role'])),
+            ]);
+            Workspace::log('member.created', 'Akun panitia dibuat: '.$user->name, $user->id, 'user');
+            return $user;
+        });
+
         return back()->with('success','Akun dibuat · ID: '.$user->login_id.'. Bagikan kredensial secara pribadi.');
     }
 
