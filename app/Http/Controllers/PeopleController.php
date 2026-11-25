@@ -78,11 +78,13 @@ class PeopleController extends Controller
         if (in_array($data['role'],['koordinator','anggota'],true)) $request->validate(['division_id'=>['required']]);
         else $data['division_id']=null;
         // Restoring a previously disabled membership must actually reactivate it.
-        CommitteeMember::updateOrCreate([
-            'user_id'=>$data['user_id'],'event_period_id'=>$period->id,
-            'role'=>$data['role'],'division_id'=>$data['division_id'],
-        ],['is_active'=>true,'position_title'=>ucwords(str_replace('_',' ',$data['role']))]);
-        Workspace::log('member.assigned','Penugasan role ditambahkan',$data['user_id'],'user');
+        DB::transaction(function () use ($data, $period): void {
+            CommitteeMember::updateOrCreate([
+                'user_id'=>$data['user_id'],'event_period_id'=>$period->id,
+                'role'=>$data['role'],'division_id'=>$data['division_id'],
+            ],['is_active'=>true,'position_title'=>ucwords(str_replace('_',' ',$data['role']))]);
+            Workspace::log('member.assigned','Penugasan role ditambahkan',$data['user_id'],'user');
+        });
         return back()->with('success','Jabatan berhasil ditambahkan ke akun.');
     }
 }
