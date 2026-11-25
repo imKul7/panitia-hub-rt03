@@ -129,8 +129,10 @@ jobs:
             public/audio/indonesia-raya-instrumental.mp3; do
             if [ -f "$asset" ]; then
               docker exec rt03-preview test -s "/app/$asset"
+              # Caddy's document root is /app/public, not /app.
+              url_path="${asset#public/}"
               curl --fail --silent --show-error \
-                -o "/tmp/$(basename "$asset")" "http://127.0.0.1:10000/$asset"
+                -o "/tmp/$(basename "$asset")" "http://127.0.0.1:10000/$url_path"
               cmp "$asset" "/tmp/$(basename "$asset")"
               echo "PASS media HTTP: $asset"
             fi
