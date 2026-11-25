@@ -17,6 +17,7 @@ if (audio instanceof HTMLAudioElement) {
   let userPaused = false;
   let blocked = false;
   let failed = false;
+  let buffering = false;
 
   function isPlaying() {
     return !audio.paused && !audio.ended;
@@ -25,15 +26,19 @@ if (audio instanceof HTMLAudioElement) {
   function updateControls() {
     const playing = isPlaying();
     let message;
-    if (playing) message = 'Instrumental Indonesia Raya · sedang diputar';
+    if (playing && buffering) message = 'Menunggu audio selesai dimuat…';
+    else if (playing) message = 'Instrumental Indonesia Raya · sedang diputar';
     else if (failed || audio.error) message = 'Audio tidak dapat diputar. Periksa file MP3.';
     else if (audio.ended) message = 'Musik selesai · tekan Putar untuk mengulang';
     else if (userPaused) message = 'Musik dijeda';
-    else if (blocked) message = 'Klik atau sentuh di mana saja untuk mulai';
+    else if (blocked) message = 'Browser menahan autoplay · ketuk Putar';
     else message = 'Menyiapkan musik...';
 
     document.querySelectorAll('[data-rt03-anthem-player]').forEach(wrapper => {
-      wrapper.classList.toggle('is-playing', playing);
+      wrapper.classList.toggle('is-playing', playing && !buffering);
+      wrapper.classList.toggle('is-awaiting-gesture', blocked && !userPaused);
+      wrapper.classList.toggle('has-error', Boolean(failed || audio.error));
+      wrapper.classList.toggle('is-buffering', buffering && playing);
       wrapper.querySelectorAll('[data-rt03-anthem-status]').forEach(el => {
         if (el.textContent !== message) el.textContent = message;
       });
@@ -50,6 +55,7 @@ if (audio instanceof HTMLAudioElement) {
   function startMusic(automatic) {
     if (automatic && (!autoWanted || userPaused || audio.ended || !audio.paused)) return;
     if (audio.error) {
+      buffering = false;
       failed = true;
       autoWanted = false;
       updateControls();
@@ -132,7 +138,7 @@ if (audio instanceof HTMLAudioElement) {
     autoWanted = false;
     blocked = false;
     failed = false;
-    if (isPlaying()) {
+    if (!audio.paused && !audio.ended) {
       userPaused = true; // Subsequent unrelated clicks MUST NOT restart music.
       audio.pause();
     } else {
@@ -150,12 +156,34 @@ if (audio instanceof HTMLAudioElement) {
     autoWanted = false;
     updateControls();
   });
-  audio.addEventListener('pause', updateControls);
+  audio.addEventListener('waiting', () => {
+    buffering = true;
+    updateControls();
+  });
+  audio.addEventListener('stalled', () => {
+    buffering = true;
+    updateControls();
+  });
+  audio.addEventListener('playing', () => {
+    buffering = false;
+    blocked = false;
+    failed = false;
+    updateControls();
+  });
+  audio.addEventListener('canplay', () => {
+    buffering = false;
+    updateControls();
+  });
+  audio.addEventListener('pause', () => {
+    buffering = false;
+    updateControls();
+  });
   audio.addEventListener('ended', () => {
     autoWanted = false; // Do not loop/restart on an unrelated click.
     updateControls();
   });
   audio.addEventListener('error', () => {
+    buffering = false;
     autoWanted = false;
     failed = true;
     updateControls();
