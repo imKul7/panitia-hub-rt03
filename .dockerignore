@@ -25,3 +25,4 @@ database/*.db
 tests
 docs
 README.md
+!public/audio/indonesia-raya-instrumental.mp3
