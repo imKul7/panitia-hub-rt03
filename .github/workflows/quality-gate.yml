@@ -3,6 +3,8 @@ name: PanitiaHub Quality Gate
 on:
   push:
     branches:
+      - main
+      - feature/integrasi-hapus-semua-modul
       - fix/audit-integritas-alur-rt03
   pull_request:
 
@@ -16,6 +18,73 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Verify no local secrets or resident data accidentally tracked
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git ls-files | grep -Ei '(^|/)(\.env|\.env\.production|.*\.sqlite|.*\.sqlite-wal|.*\.sqlite-shm|.*\.db|.*\.sql|.*\.sql\.gz|.*\.pem|.*\.p12|.*\.pfx|.*\.key)
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_sqlite, sqlite3, fileinfo, gd
+          coverage: none
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Create Laravel runtime directories
+        run: mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs storage/app/private storage/app/public
+      - name: Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+      - name: Create temporary environment (CI only)
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+      - name: Check database isolation
+        run: |
+          php -r '$x=file_get_contents("phpunit.xml"); foreach(["DB_CONNECTION", "DB_DATABASE", "DB_URL"] as $name) { if (!preg_match("/<env name=\"".preg_quote($name,"/")."\"[^>]*force=\"true\"/", $x)) { fwrite(STDERR,"Unsafe phpunit.xml: ".$name."\n"); exit(1); }}'
+      - name: Frontend dependencies
+        run: npm ci
+      - name: Syntax check fast navigation
+        run: |
+          node --check resources/js/public-navigation.js
+          node --check resources/js/public-audio.js
+          node --check resources/js/workspace-navigation.js
+          node --check resources/js/validation-feedback.js
+          node --check resources/js/loading-animation.js
+          node --check resources/js/app.js
+      - name: Browserless loader behavior regression tests
+        run: node --test tests/js/loading-animation.test.cjs
+      - name: Vite production build
+        run: npm run build
+      - name: Laravel feature and unit tests (SQLite in-memory)
+        run: php artisan test
+
+      - name: Verify complete guarded reset on disposable LOCAL SQLite
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Explicitly separate from PHPUnit's forced in-memory DB.
+          # This is a disposable GitHub runner file, NEVER a user's DB.
+          export APP_ENV=local
+          export DB_CONNECTION=sqlite
+          export DB_URL=''
+          export DB_DATABASE="$PWD/database/rt03-ci-reset.sqlite"
+          touch "$DB_DATABASE"
+          php artisan migrate --force --no-interaction
+          php artisan db:seed --force --no-interaction
+          php artisan tinker --execute='App\Models\User::create(["name"=>"CI Admin Asli","email"=>"original-ci-admin@example.test","password"=>"ci-only-password-123","is_super_admin"=>true,"is_active"=>true]);'
+          php artisan db:seed --class=DemoRoleAccountsSeeder --no-interaction
+          php artisan rt03:reset-demo
+          php artisan rt03:reset-demo --execute --confirm=RESET-RT03-LOCAL
+          php artisan tinker --execute='if (App\Models\User::count() !== 1 || App\Models\User::where("is_super_admin",true)->count() !== 1 || App\Models\EventPeriod::count() !== 1 || App\Models\Division::count() !== 10 || App\Models\SopGuide::count() !== 6 || App\Models\CommitteeMember::count() !== 0 || App\Models\ActivityLog::count() !== 0) { throw new RuntimeException("Disposable SQLite reset failed to clean demo state"); }'
+          test -n "$(find storage/rt03-demo-backups -name before-reset.sqlite -size +0c -print -quit)"
+          rm -f "$DB_DATABASE"
+; then
+            echo "ERROR: local database, secret, or dump is tracked by Git."
+            exit 1
+          fi
       - name: PHP 8.2 and SQLite extensions
         uses: shivammathur/setup-php@v2
         with:
