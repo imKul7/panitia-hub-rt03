@@ -28,13 +28,23 @@ class GalleryController extends Controller
             'consent_confirmed'=>['accepted'],
         ],['consent_confirmed.accepted'=>'Pastikan foto layak dipublikasikan dan izin penggunaan telah diperoleh.']);
         $file=$request->file('image');
-        $item=GalleryItem::create([
-            'event_period_id'=>$period->id,'uploaded_by'=>auth()->id(),
-            'title'=>$data['title'], 'file_path'=>$file->store('private/gallery/'.$period->id,'local'),
-            'mime_type'=>$file->getMimeType(), 'consent_confirmed'=>true,
-            'is_published'=>$request->boolean('is_published'),
-        ]);
-        Workspace::log('gallery.created','Foto galeri diunggah: '.$item->title,$item->id,'gallery_item');
+        $path=$file->store('private/gallery/'.$period->id,'local');
+        abort_unless($path, 500, 'Foto gagal disimpan.');
+        try {
+            $item = \Illuminate\Support\Facades\DB::transaction(function () use ($period, $data, $file, $path, $request): GalleryItem {
+                $item = GalleryItem::create([
+                    'event_period_id'=>$period->id,'uploaded_by'=>auth()->id(),
+                    'title'=>$data['title'], 'file_path'=>$path,
+                    'mime_type'=>$file->getMimeType(), 'consent_confirmed'=>true,
+                    'is_published'=>$request->boolean('is_published'),
+                ]);
+                Workspace::log('gallery.created','Foto galeri diunggah: '.$item->title,$item->id,'gallery_item');
+                return $item;
+            });
+        } catch (\Throwable $error) {
+            Storage::disk('local')->delete($path);
+            throw $error;
+        }
         return back()->with('success','Foto berhasil disimpan.');
     }
 
