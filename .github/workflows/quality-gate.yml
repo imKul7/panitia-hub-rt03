@@ -3,6 +3,8 @@ name: PanitiaHub Quality Gate
 on:
   push:
     branches:
+      - main
+      - feature/integrasi-hapus-semua-modul
       - fix/audit-integritas-alur-rt03
   pull_request:
 
@@ -16,6 +18,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Verify no local secrets or resident data accidentally tracked
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git ls-files | grep -Ei '(^|/)(\.env|\.env\.production|.*\.sqlite|.*\.sqlite-wal|.*\.sqlite-shm|.*\.db|.*\.sql|.*\.sql\.gz|.*\.pem|.*\.p12|.*\.pfx|.*\.key)$'; then
+            echo "ERROR: local database, secret, or dump is tracked by Git."
+            exit 1
+          fi
       - name: PHP 8.2 and SQLite extensions
         uses: shivammathur/setup-php@v2
         with:
