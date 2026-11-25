@@ -38,9 +38,18 @@ class FinanceController extends Controller
         ]);
         $file=$request->file('proof');
         $path=$file?->store('private/finance/'.$period->id, 'local');
+        if ($file && !$path) abort(500, 'Bukti transaksi gagal disimpan.');
         unset($data['proof']);
-        $transaction=FinancialTransaction::create([...$data,'event_period_id'=>$period->id,'created_by'=>auth()->id(),'proof_file'=>$path,'proof_name'=>$file?->getClientOriginalName()]);
-        Workspace::log('finance.created','Transaksi keuangan dicatat: '.$transaction->title,$transaction->id,'financial_transaction');
+        try {
+            $transaction = DB::transaction(function () use ($data, $period, $path, $file): FinancialTransaction {
+                $transaction = FinancialTransaction::create([...$data,'event_period_id'=>$period->id,'created_by'=>auth()->id(),'proof_file'=>$path,'proof_name'=>$file?->getClientOriginalName()]);
+                Workspace::log('finance.created','Transaksi keuangan dicatat: '.$transaction->title,$transaction->id,'financial_transaction');
+                return $transaction;
+            });
+        } catch (\Throwable $error) {
+            if ($path) Storage::disk('local')->delete($path);
+            throw $error;
+        }
         return back()->with('success','Transaksi tersimpan. Koreksi transaksi harus melalui prosedur audit, bukan hapus langsung.');
     }
 
