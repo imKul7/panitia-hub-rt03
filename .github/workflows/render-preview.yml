@@ -18,6 +18,9 @@ on:
       - .dockerignore
       - docker/**
       - .github/workflows/render-preview.yml
+      - bootstrap/app.php
+      - resources/**
+      - tests/Feature/PublicDeploymentAssetTest.php
 
 permissions:
   contents: read
