@@ -2508,3 +2508,45 @@
   }
   .rt03-account-compact-header h2{line-height:1.35}
 }
+
+/* First-deploy fallback when the owner's private RT photos are not tracked. */
+.rt03-hero-v2 .rt03-hero-photo-fallback {
+  background: radial-gradient(circle at 24% 28%, #e75456 0%, transparent 42%),
+    linear-gradient(142deg, #d22b37 0%, #a92030 53%, #152941 100%);
+  letter-spacing: -.09em;
+  text-shadow: 0 12px 35px rgba(10,18,33,.18);
+}
+.rt03-hero-v2 .rt03-hero-photo-fallback strong {
+  font-weight: 800;
+  line-height: 1;
+}
+.rt03-neighborhood-v2 .rt03-neighborhood-photo-fallback {
+  display: flex;
+  position: absolute;
+  inset: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: radial-gradient(circle at 12% 23%, #e9d3d1 0%, transparent 49%),
+    linear-gradient(145deg, #f3ece9 0%, #e9edf3 100%);
+  color: var(--navy);
+  font-family: var(--font-head);
+  letter-spacing: .12em;
+}
+.rt03-neighborhood-photo-fallback span {
+  color: var(--red);
+  font-size: clamp(11px, 1.2vw, 16px);
+  font-weight: 800;
+}
+.rt03-neighborhood-photo-fallback strong {
+  font-size: clamp(52px, 7vw, 105px);
+  line-height: 1.12;
+  letter-spacing: -.09em;
+  font-weight: 800;
+}
+.rt03-neighborhood-photo-fallback small {
+  font-size: clamp(8px, 1vw, 12px);
+  font-weight: 800;
+  letter-spacing: .13em;
+}

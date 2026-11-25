@@ -13,7 +13,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        // Railway / Render terminate TLS before proxying the request to PHP.
+        // Only accept the forwarded scheme (not client IP, host or port)
+        // when the deliberately isolated preview runs behind that proxy.
+        // For other controlled deployments, explicitly set TRUSTED_PROXIES.
+        $proxies = env('TRUSTED_PROXIES', env('RT03_DEMO_MODE') === 'ephemeral' ? '*' : null);
+        if (filled($proxies)) {
+            $middleware->trustProxies(
+                at: $proxies,
+                headers: Request::HEADER_X_FORWARDED_PROTO,
+            );
+        }
     })
     ->withExceptions(function (Exceptions $exceptions) {
         // Known workspace HTTP failures should use our branded UI even when
