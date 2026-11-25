@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Announcement, Competition, CompetitionResult, EventPeriod, EventSchedule};
+use App\Models\{Announcement, Competition, CompetitionResult, EventSchedule};
+use App\Support\PublicPeriod;
 
 class PublicController extends Controller
 {
     private function current()
     {
-        return EventPeriod::where('status','active')->first() ?? EventPeriod::latest('year')->first();
+        return PublicPeriod::current();
     }
 
     public function home()
@@ -41,7 +42,11 @@ class PublicController extends Controller
     public function gallery()
     {
         $period=$this->current();
-        $items=$period ? \App\Models\GalleryItem::where('event_period_id',$period->id)->where('is_published',true)->where('consent_confirmed',true)->latest()->get() : collect();
+        // Public galleries grow every year. Render a bounded page instead
+        // of retrieving every image entry in a single request.
+        $items = \App\Models\GalleryItem::where('event_period_id', $period?->id ?? -1)
+            ->where('is_published', true)->where('consent_confirmed', true)
+            ->latest()->paginate(24);
         return view('public.gallery',compact('period','items'));
     }
 }

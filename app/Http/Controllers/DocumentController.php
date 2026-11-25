@@ -35,9 +35,18 @@ class DocumentController extends Controller
         ]);
         $file=$request->file('file');
         $path=$file->store('private/documents/'.$period->id,'local');
+        abort_unless($path, 500, 'Berkas gagal disimpan.');
         unset($data['file']);
-        $item=Document::create([...$data,'event_period_id'=>$period->id,'uploaded_by'=>auth()->id(),'file_path'=>$path,'original_name'=>$file->getClientOriginalName()]);
-        Workspace::log('document.created','Dokumen diunggah: '.$item->title,$item->id,'document');
+        try {
+            $item = \Illuminate\Support\Facades\DB::transaction(function () use ($data, $period, $path, $file): Document {
+                $item = Document::create([...$data,'event_period_id'=>$period->id,'uploaded_by'=>auth()->id(),'file_path'=>$path,'original_name'=>$file->getClientOriginalName()]);
+                Workspace::log('document.created','Dokumen diunggah: '.$item->title,$item->id,'document');
+                return $item;
+            });
+        } catch (\Throwable $error) {
+            Storage::disk('local')->delete($path);
+            throw $error;
+        }
         return back()->with('success','Dokumen berhasil disimpan secara privat.');
     }
     public function download(Document $document)

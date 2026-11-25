@@ -39,11 +39,14 @@ class PeriodController extends Controller
 
     public function activate(EventPeriod $period)
     {
-        Access::ensure('manage-periods');
-        abort_if($period->status==='active',422,'Periode ini sudah aktif.');
+        Access::ensure('manage-periods', write:true);
+        // Archived periods are historical records, not reusable drafts.
+        abort_unless($period->status==='draft', 422, 'Hanya periode draf yang dapat diaktifkan.');
         DB::transaction(function()use($period) {
+            $target = EventPeriod::whereKey($period->id)->lockForUpdate()->firstOrFail();
+            abort_unless($target->status==='draft', 422, 'Hanya periode draf yang dapat diaktifkan.');
             EventPeriod::where('status','active')->update(['status'=>'archived']);
-            $period->update(['status'=>'active']);
+            $target->update(['status'=>'active']);
         });
         Workspace::log('period.activated','Periode diaktifkan: '.$period->year,$period->id,'event_period');
         return back()->with('success','Periode '.$period->year.' sekarang aktif. Periode sebelumnya tetap tersimpan sebagai arsip.');
@@ -52,7 +55,7 @@ class PeriodController extends Controller
     public function archive()
     {
         Access::ensure('view');
-        $periods=EventPeriod::orderByDesc('year')->get();
+        $periods=EventPeriod::where('status', 'archived')->orderByDesc('year')->get();
         $summaries=$periods->map(function($p) {
             return [
                 'period'=>$p,
