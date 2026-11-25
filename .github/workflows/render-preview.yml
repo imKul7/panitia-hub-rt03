@@ -66,7 +66,7 @@ jobs:
           curl --fail --silent --show-error http://127.0.0.1:10000/up
           curl --fail --silent --show-error --output /tmp/rt03-home.html http://127.0.0.1:10000/
           grep -qi 'Semangat' /tmp/rt03-home.html
-      - name: Confirm proxied HTTPS assets and missing-photo fallbacks
+      - name: Confirm proxied HTTPS assets and real media or fallbacks
         shell: bash
         run: |
           set -euo pipefail
@@ -92,9 +92,57 @@ jobs:
           grep -iq 'content-type: text/css' /tmp/rt03-css-headers
           grep -iq 'content-type: text/javascript\|content-type: application/javascript' /tmp/rt03-js-headers
           grep -q 'public-hero' /tmp/rt03-css
-          grep -q 'rt03-hero-photo-fallback' /tmp/rt03-https.html
-          grep -q 'rt03-neighborhood-photo-fallback' /tmp/rt03-https.html
-          echo 'PASS: HTTPS URL generation; CSS/JS served with correct MIME; no missing image tags.'
+          # A clean checkout without licensed media must render branded fallbacks.
+          # When authorized media is committed, it must survive Docker packaging
+          # and actually be downloadable byte-for-byte over HTTP.
+          if [ -f public/images/rt03/hero-kemerdekaan.jpg ]; then
+            grep -q '/images/rt03/hero-kemerdekaan.jpg' /tmp/rt03-https.html
+            if grep -q 'rt03-hero-photo-fallback' /tmp/rt03-https.html; then
+              echo 'ERROR: hero still renders fallback while real photo exists'
+              exit 1
+            fi
+          else
+            grep -q 'rt03-hero-photo-fallback' /tmp/rt03-https.html
+          fi
+          if [ -f public/images/rt03/lingkungan-rt03.jpeg ]; then
+            grep -q '/images/rt03/lingkungan-rt03.jpeg' /tmp/rt03-https.html
+            if grep -q 'rt03-neighborhood-photo-fallback' /tmp/rt03-https.html; then
+              echo 'ERROR: environment photo still renders fallback when file exists'
+              exit 1
+            fi
+          else
+            grep -q 'rt03-neighborhood-photo-fallback' /tmp/rt03-https.html
+          fi
+
+          curl --fail --silent --show-error \
+            -H 'Host: panitia-hub-rt03.up.railway.app' \
+            -H 'X-Forwarded-Proto: https' \
+            -o /tmp/rt03-login.html http://127.0.0.1:10000/login
+
+          for asset in \
+            public/images/rt03/hero-kemerdekaan.jpg \
+            public/images/rt03/lingkungan-rt03.jpeg \
+            public/images/rt03/logo.jpeg \
+            public/images/rt03/panitia-01.jpeg \
+            public/images/rt03/panitia-02.jpeg \
+            public/images/rt03/panitia-03.jpeg \
+            public/audio/indonesia-raya-instrumental.mp3; do
+            if [ -f "$asset" ]; then
+              docker exec rt03-preview test -s "/app/$asset"
+              curl --fail --silent --show-error \
+                -o "/tmp/$(basename "$asset")" "http://127.0.0.1:10000/$asset"
+              cmp "$asset" "/tmp/$(basename "$asset")"
+              echo "PASS media HTTP: $asset"
+            fi
+          done
+
+          if [ -f public/images/rt03/panitia-01.jpeg ]; then
+            grep -q '/images/rt03/panitia-01.jpeg' /tmp/rt03-login.html
+          fi
+          if [ -f public/audio/indonesia-raya-instrumental.mp3 ]; then
+            grep -q '/audio/indonesia-raya-instrumental.mp3' /tmp/rt03-https.html
+          fi
+          echo 'PASS: HTTPS Vite CSS/JS and permitted media served; fallbacks only when needed.'
       - name: Reject unsafe environment before starting the container
         shell: bash
         run: |
