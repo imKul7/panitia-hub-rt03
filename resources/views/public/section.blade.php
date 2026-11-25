@@ -2,7 +2,21 @@
 @php($labels=['lomba'=>['Perlombaan','Kenali lomba yang disiapkan panitia.'],'jadwal'=>['Jadwal kegiatan','Catat tanggal pentingnya.'],'pengumuman'=>['Pengumuman','Informasi resmi dari panitia.'],'hasil'=>['Hasil lomba','Daftar juara yang telah diumumkan resmi.']])
 @section('title',$labels[$section][0])
 @section('content')
-<section class="listing-hero"><span class="eyebrow">RT 03 / INFORMASI RESMI / {{ $period?->year ?? '2027' }}</span><h1 data-word-reveal>{{ $labels[$section][0] }}<span class="text-red">.</span></h1><p>{{ $labels[$section][1] }}</p></section>
+
+<section class="listing-hero rt03-listing-hero rt03-listing-hero--{{ $section }}" aria-labelledby="rt03-page-title">
+  <div class="rt03-listing-light" aria-hidden="true">
+    <span class="rt03-listing-orb rt03-listing-orb--red"></span>
+    <span class="rt03-listing-orb rt03-listing-orb--gold"></span>
+  </div>
+  <div class="rt03-listing-content">
+    <span class="eyebrow"><span class="rt03-listing-flag" aria-hidden="true"></span> RT 03 / INFORMASI RESMI / {{ $period?->year ?? '2027' }}</span>
+    <h1 id="rt03-page-title" data-word-reveal>{{ $labels[$section][0] }}<span class="text-red">.</span></h1>
+    <p>{{ $labels[$section][1] }}</p>
+    <span class="rt03-listing-bottomline">BERSAMA <span>·</span> BERGERAK <span>·</span> BERKARYA</span>
+  </div>
+  <span class="rt03-listing-watermark" aria-hidden="true">03<span>.</span></span>
+  <span class="rt03-listing-corner" aria-hidden="true">17 / 08</span>
+</section>
 <section class="public-section listing-section"><div class="listing-top"><span class="eyebrow">DITERBITKAN PANITIA</span><span class="results-count">{{ $items->count() }} informasi</span></div><div class="listing-grid" data-stagger>
 @forelse($items as $item)
   <article class="listing-card reveal-child">

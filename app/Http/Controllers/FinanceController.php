@@ -7,6 +7,7 @@ use App\Support\{Access, Workspace};
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class FinanceController extends Controller
 {
@@ -37,9 +38,18 @@ class FinanceController extends Controller
         ]);
         $file=$request->file('proof');
         $path=$file?->store('private/finance/'.$period->id, 'local');
+        if ($file && !$path) abort(500, 'Bukti transaksi gagal disimpan.');
         unset($data['proof']);
-        $transaction=FinancialTransaction::create([...$data,'event_period_id'=>$period->id,'created_by'=>auth()->id(),'proof_file'=>$path,'proof_name'=>$file?->getClientOriginalName()]);
-        Workspace::log('finance.created','Transaksi keuangan dicatat: '.$transaction->title,$transaction->id,'financial_transaction');
+        try {
+            $transaction = DB::transaction(function () use ($data, $period, $path, $file): FinancialTransaction {
+                $transaction = FinancialTransaction::create([...$data,'event_period_id'=>$period->id,'created_by'=>auth()->id(),'proof_file'=>$path,'proof_name'=>$file?->getClientOriginalName()]);
+                Workspace::log('finance.created','Transaksi keuangan dicatat: '.$transaction->title,$transaction->id,'financial_transaction');
+                return $transaction;
+            });
+        } catch (\Throwable $error) {
+            if ($path) Storage::disk('local')->delete($path);
+            throw $error;
+        }
         return back()->with('success','Transaksi tersimpan. Koreksi transaksi harus melalui prosedur audit, bukan hapus langsung.');
     }
 
@@ -63,10 +73,20 @@ class FinanceController extends Controller
     {
         Access::ensure('finance-approve',write:true);
         abort_unless($expenseRequest->event_period_id===Workspace::period()->id,404);
-        abort_unless($expenseRequest->status==='pending',422,'Pengajuan ini sudah diputuskan.');
         $data=$request->validate(['status'=>['required',Rule::in(['approved','rejected'])],'review_note'=>['nullable','string','max:3000']]);
-        $expenseRequest->update([...$data,'reviewed_by'=>auth()->id(),'reviewed_at'=>now()]);
-        Workspace::log('expense.reviewed','Pengajuan dana '.$data['status'].': '.$expenseRequest->title,$expenseRequest->id,'expense_request');
+
+        // Serialize decisions for the same request. The status must be checked
+        // AFTER locking, otherwise two reviewers can overwrite each other.
+        DB::transaction(function () use ($expenseRequest, $data): void {
+            $locked = ExpenseRequest::where('event_period_id', Workspace::period()->id)
+                ->lockForUpdate()->findOrFail($expenseRequest->id);
+            abort_unless($locked->status === 'pending', 422, 'Pengajuan ini sudah diputuskan.');
+            $locked->update([...$data, 'reviewed_by' => auth()->id(), 'reviewed_at' => now()]);
+            Workspace::log('expense.reviewed',
+                'Pengajuan dana '.$data['status'].': '.$locked->title,
+                $locked->id, 'expense_request');
+        });
+
         return back()->with('success','Keputusan pengajuan tersimpan.');
     }
 

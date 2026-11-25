@@ -16,12 +16,18 @@ Route::post('/logout',[AuthController::class,'logout'])->middleware('auth')->nam
 
 Route::middleware('auth')->prefix('app')->group(function() {
     Route::get('/', DashboardController::class)->name('dashboard');
+    Route::delete('/records/{resource}/{id}', \App\Http\Controllers\RecordDeletionController::class)->whereNumber('id')->name('records.destroy');
     Route::get('/profil',[ProfileController::class,'index'])->name('profile.index');
     Route::patch('/profil',[ProfileController::class,'update'])->name('profile.update');
     Route::patch('/profil/password',[ProfileController::class,'changePassword'])->name('profile.password');
+    Route::get('/profil/foto',[ProfileController::class,'photo'])->name('profile.photo');
+    Route::post('/profil/foto',[ProfileController::class,'storePhoto'])->middleware('throttle:12,1')->name('profile.photo.store');
+    Route::delete('/profil/foto',[ProfileController::class,'deletePhoto'])->name('profile.photo.destroy');
     Route::get('/panitia',[PeopleController::class,'index'])->name('people.index');
     Route::post('/panitia',[PeopleController::class,'store'])->name('people.store');
     Route::post('/panitia/penugasan',[PeopleController::class,'assign'])->name('people.assign');
+    Route::patch('/panitia/akun/{user}/reset-password',[\App\Http\Controllers\AdminPasswordController::class,'update'])
+        ->middleware('throttle:10,1')->name('people.password.reset');
     Route::get('/tugas',[TaskController::class,'index'])->name('tasks.index');
     Route::post('/tugas',[TaskController::class,'store'])->name('tasks.store');
     Route::patch('/tugas/{task}',[TaskController::class,'update'])->name('tasks.update');
