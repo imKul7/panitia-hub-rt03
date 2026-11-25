@@ -54,3 +54,24 @@ jobs:
         run: npm run build
       - name: Laravel feature and unit tests (SQLite in-memory)
         run: php artisan test
+
+      - name: Verify complete guarded reset on disposable LOCAL SQLite
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Explicitly separate from PHPUnit's forced in-memory DB.
+          # This is a disposable GitHub runner file, NEVER a user's DB.
+          export APP_ENV=local
+          export DB_CONNECTION=sqlite
+          export DB_URL=''
+          export DB_DATABASE="$PWD/database/rt03-ci-reset.sqlite"
+          touch "$DB_DATABASE"
+          php artisan migrate --force --no-interaction
+          php artisan db:seed --force --no-interaction
+          php artisan tinker --execute='App\Models\User::create(["name"=>"CI Admin Asli","email"=>"original-ci-admin@example.test","password"=>"ci-only-password-123","is_super_admin"=>true,"is_active"=>true]);'
+          php artisan db:seed --class=DemoRoleAccountsSeeder --no-interaction
+          php artisan rt03:reset-demo
+          php artisan rt03:reset-demo --execute --confirm=RESET-RT03-LOCAL
+          php artisan tinker --execute='if (App\Models\User::count() !== 1 || App\Models\User::where("is_super_admin",true)->count() !== 1 || App\Models\EventPeriod::count() !== 1 || App\Models\Division::count() !== 10 || App\Models\SopGuide::count() !== 6 || App\Models\CommitteeMember::count() !== 0 || App\Models\ActivityLog::count() !== 0) { throw new RuntimeException("Disposable SQLite reset failed to clean demo state"); }'
+          test -n "$(find storage/rt03-demo-backups -name before-reset.sqlite -size +0c -print -quit)"
+          rm -f "$DB_DATABASE"
