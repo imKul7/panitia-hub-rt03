@@ -7,6 +7,9 @@ on:
       - .dockerignore
       - docker/**
       - .github/workflows/render-preview.yml
+      - bootstrap/app.php
+      - resources/**
+      - tests/Feature/PublicDeploymentAssetTest.php
   push:
     branches:
       - main
@@ -60,6 +63,35 @@ jobs:
           curl --fail --silent --show-error http://127.0.0.1:10000/up
           curl --fail --silent --show-error --output /tmp/rt03-home.html http://127.0.0.1:10000/
           grep -qi 'Semangat' /tmp/rt03-home.html
+      - name: Confirm proxied HTTPS assets and missing-photo fallbacks
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Railway terminates HTTPS at its proxy then forwards HTTP to PHP.
+          # The generated Vite URLs must retain the browser-facing scheme.
+          curl --fail --silent --show-error \
+            -H 'Host: panitia-hub-rt03.up.railway.app' \
+            -H 'X-Forwarded-Proto: https' \
+            -o /tmp/rt03-https.html http://127.0.0.1:10000/
+          grep -q 'https://panitia-hub-rt03.up.railway.app/build/assets/' /tmp/rt03-https.html
+          if grep -q 'http://panitia-hub-rt03.up.railway.app/build/assets/' /tmp/rt03-https.html; then
+            echo "ERROR: Laravel generated mixed-content HTTP Vite assets behind HTTPS."
+            exit 1
+          fi
+          css_path="$(grep -oE '/build/assets/[^" ]+\.css' /tmp/rt03-https.html | head -n 1)"
+          js_path="$(grep -oE '/build/assets/[^" ]+\.js' /tmp/rt03-https.html | head -n 1)"
+          test -n "$css_path"
+          test -n "$js_path"
+          curl --fail --silent --show-error -D /tmp/rt03-css-headers \
+            -o /tmp/rt03-css "http://127.0.0.1:10000$css_path"
+          curl --fail --silent --show-error -D /tmp/rt03-js-headers \
+            -o /tmp/rt03-js "http://127.0.0.1:10000$js_path"
+          grep -iq 'content-type: text/css' /tmp/rt03-css-headers
+          grep -iq 'content-type: text/javascript\|content-type: application/javascript' /tmp/rt03-js-headers
+          grep -q 'public-hero' /tmp/rt03-css
+          grep -q 'rt03-hero-photo-fallback' /tmp/rt03-https.html
+          grep -q 'rt03-neighborhood-photo-fallback' /tmp/rt03-https.html
+          echo 'PASS: HTTPS URL generation; CSS/JS served with correct MIME; no missing image tags.'
       - name: Reject unsafe environment before starting the container
         shell: bash
         run: |
