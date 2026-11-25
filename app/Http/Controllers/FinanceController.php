@@ -64,8 +64,11 @@ class FinanceController extends Controller
             'division_id'=>['required',Rule::exists('divisions','id')->where('event_period_id',$period->id)],
         ]);
         abort_unless(Access::can(auth()->user(),'expenses-request-for',(int)$data['division_id']),403,'Hanya dapat mengajukan untuk divisi Anda.');
-        $req=ExpenseRequest::create([...$data,'event_period_id'=>$period->id,'requested_by'=>auth()->id()]);
-        Workspace::log('expense.requested','Pengajuan dana: '.$req->title,$req->id,'expense_request');
+        // Request and its audit record must succeed or fail as one unit.
+        DB::transaction(function () use ($data, $period): void {
+            $req = ExpenseRequest::create([...$data,'event_period_id'=>$period->id,'requested_by'=>auth()->id()]);
+            Workspace::log('expense.requested','Pengajuan dana: '.$req->title,$req->id,'expense_request');
+        });
         return back()->with('success','Pengajuan berhasil dikirim.');
     }
 

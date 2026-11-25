@@ -72,12 +72,13 @@ class CompetitionController extends Controller
             if ($existing) {
                 throw \Illuminate\Validation\ValidationException::withMessages(['participant_id'=>'Peserta sudah terdaftar pada lomba ini.']);
             }
-            return CompetitionRegistration::create([
+            $registration = CompetitionRegistration::create([
                 'competition_id'=>$competition->id,'participant_id'=>$participant->id,'registered_by'=>auth()->id(),
                 'registration_code'=>'RT03-'.strtoupper((string)Str::ulid()),'status'=>'confirmed',
             ]);
+            Workspace::log('registration.created','Pendaftaran peserta #'.$registration->id,$registration->id,'competition_registration');
+            return $registration;
         });
-        Workspace::log('registration.created','Pendaftaran peserta #'.$registration->id,$registration->id,'competition_registration');
         return back()->with('success','Peserta berhasil didaftarkan oleh panitia.');
     }
 

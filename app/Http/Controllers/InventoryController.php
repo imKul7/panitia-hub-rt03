@@ -48,8 +48,8 @@ class InventoryController extends Controller
             $change=$data['movement_type']==='borrow'?$data['quantity']:-$data['quantity'];
             $locked->increment('quantity_in_use',$change);
             InventoryMovement::create([...$data,'inventory_item_id'=>$locked->id,'user_id'=>auth()->id()]);
+            Workspace::log('inventory.moved','Pergerakan inventaris: '.$locked->name,$locked->id,'inventory_item');
         });
-        Workspace::log('inventory.moved','Pergerakan inventaris: '.$item->name,$item->id,'inventory_item');
         return back()->with('success','Peminjaman/pengembalian tercatat.');
     }
 }

@@ -7,6 +7,7 @@ use App\Support\{Access, Workspace};
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
@@ -107,11 +108,13 @@ class TaskController extends Controller
             'status' => ['required', Rule::in(['todo', 'in_progress', 'review', 'done', 'blocked'])],
             'note' => ['nullable', 'string', 'max:3000'],
         ]);
-        $task->update(['status' => $data['status'],
-            'completed_at' => $data['status'] === 'done' ? now() : null]);
-        TaskUpdate::create(['task_id' => $task->id, 'user_id' => auth()->id(),
-            'status' => $data['status'], 'note' => $data['note'] ?? null]);
-        Workspace::log('task.updated', 'Status tugas diperbarui: '.$task->title, $task->id, 'task');
+        DB::transaction(function () use ($task, $data): void {
+            $task->update(['status' => $data['status'],
+                'completed_at' => $data['status'] === 'done' ? now() : null]);
+            TaskUpdate::create(['task_id' => $task->id, 'user_id' => auth()->id(),
+                'status' => $data['status'], 'note' => $data['note'] ?? null]);
+            Workspace::log('task.updated', 'Status tugas diperbarui: '.$task->title, $task->id, 'task');
+        });
 
         return back()->with('success', 'Progres tugas berhasil disimpan.');
     }

@@ -2047,6 +2047,10 @@
   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
 }
 .public-body.rt03-public-home .rt03-anthem-dock{display:none}
+/* If browser refuses audible autoplay, keep a visible, accessible control
+   on the first screen instead of hiding all fixed controls behind hero scroll. */
+.public-body.rt03-public-home .rt03-anthem-dock.is-awaiting-gesture,
+.public-body.rt03-public-home .rt03-anthem-dock.has-error{display:flex}
 .public-body .rt03-anthem-dock-icon{
   width:39px;height:39px;flex:0 0 auto;
   display:grid;place-items:center;border-radius:12px;
