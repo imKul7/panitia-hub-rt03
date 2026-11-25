@@ -4,7 +4,14 @@
 <!-- RT03-HERO-REDESIGN-V2 -->
 <section class="public-hero rt03-hero-v2">
   <div class="hero-visual rt03-hero-visual">
-    <img class="rt03-hero-photo" src="{{ asset('images/rt03/hero-kemerdekaan.jpg') }}" alt="Foto kebersamaan warga dan panitia RT 03" width="1920" height="1080" fetchpriority="high" decoding="async">
+    @php($heroPhoto = collect(['hero-kemerdekaan.jpg','hero-kemerdekaan.jpeg','hero-kemerdekaan.webp','hero-kemerdekaan.png'])->first(fn ($name) => is_file(public_path('images/rt03/'.$name))))
+    @if($heroPhoto)
+      <img class="rt03-hero-photo" src="{{ asset('images/rt03/'.$heroPhoto) }}" alt="Foto kebersamaan warga dan panitia RT 03" width="1920" height="1080" fetchpriority="high" decoding="async">
+    @else
+      <div class="rt03-hero-photo-fallback" role="img" aria-label="Identitas RT 03 sementara, menunggu foto kebersamaan warga">
+        <span>RT</span><strong>03</strong>
+      </div>
+    @endif
     <div class="rt03-hero-shade" aria-hidden="true"></div>
     <div class="rt03-hero-mark" aria-label="17 Agustus"><span>17</span><small>/</small><span>08</span></div>
     <div class="rt03-hero-caption"><span>RT 03 / DOKUMENTASI KEGIATAN</span><span>INDONESIA MERDEKA</span></div>
@@ -56,7 +63,14 @@
 <!-- RT03-NEIGHBORHOOD-SECTION-V2 -->
 <section class="public-neighborhood rt03-neighborhood-v2" aria-labelledby="rt03-neighborhood-heading">
   <div class="neighborhood-media">
-    <img src="{{ asset('images/rt03/lingkungan-rt03.jpeg') }}" alt="Dokumentasi kebersamaan warga di lingkungan RT 03" width="1600" height="1200" loading="lazy" decoding="async">
+    @php($environmentPhoto = collect(['lingkungan-rt03.jpeg','lingkungan-rt03.jpg','lingkungan-rt03.webp','lingkungan-rt03.png'])->first(fn ($name) => is_file(public_path('images/rt03/'.$name))))
+    @if($environmentPhoto)
+      <img src="{{ asset('images/rt03/'.$environmentPhoto) }}" alt="Dokumentasi kebersamaan warga di lingkungan RT 03" width="1600" height="1200" loading="lazy" decoding="async">
+    @else
+      <div class="rt03-neighborhood-photo-fallback" role="img" aria-label="Area foto lingkungan RT 03, dokumentasi belum tersedia">
+        <span>LINGKUNGAN</span><strong>RT 03</strong><small>BERSAMA • BERGERAK • BERKARYA</small>
+      </div>
+    @endif
     <span class="neighborhood-media-tag">LINGKUNGAN RT 03</span>
   </div>
   <div class="neighborhood-content">
