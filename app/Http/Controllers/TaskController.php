@@ -90,9 +90,19 @@ class TaskController extends Controller
         Access::ensure('view', write:true);
         $period = Workspace::period();
         abort_unless($task->event_period_id === $period->id, 404);
-        abort_unless(Access::can(auth()->user(), 'task-update', $task->division_id)
-            || ($task->assigned_to === auth()->id()
-                && Access::can(auth()->user(), 'task-assignee-update')), 403);
+        $canManage = Access::can(auth()->user(), 'task-update', $task->division_id);
+        // A former assignee must not retain edit privileges after being
+        // removed from the task's division (or from the active committee).
+        $isActiveAssignee = $task->assigned_to === auth()->id()
+            && Access::can(auth()->user(), 'task-assignee-update')
+            && ($task->division_id === null
+                || CommitteeMember::where('event_period_id', $period->id)
+                    ->where('user_id', auth()->id())
+                    ->where('division_id', $task->division_id)
+                    ->where('is_active', true)
+                    ->whereIn('role', self::ASSIGNABLE_ROLES)->exists()
+                || Access::can(auth()->user(), 'task-update'));
+        abort_unless($canManage || $isActiveAssignee, 403);
         $data = $request->validate([
             'status' => ['required', Rule::in(['todo', 'in_progress', 'review', 'done', 'blocked'])],
             'note' => ['nullable', 'string', 'max:3000'],
