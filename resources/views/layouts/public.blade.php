@@ -2,7 +2,12 @@
 <html lang="id">
 <head>
 <!-- PANITIAHUB-FAVICON -->
-  <link rel="icon" type="image/jpeg" href="{{ asset('images/rt03/logo.jpeg') }}?v=20261123">
+  @php($faviconFile = collect(['logo.jpeg','logo.jpg','logo.png','logo.webp'])->first(fn ($name) => is_file(public_path('images/rt03/'.$name))))
+  @if($faviconFile)
+    <link rel="icon" href="{{ asset('images/rt03/'.$faviconFile) }}">
+  @else
+    <link rel="icon" href="{{ asset('favicon.ico') }}">
+  @endif
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f8f6f3"><meta name="description" content="Informasi kegiatan kemerdekaan RT 03: jadwal, lomba, pengumuman, dan hasil resmi panitia.">
   <title>@yield('title','Beranda') · PANITIA HUB RT 03</title>
