@@ -1,0 +1,12 @@
+{
+    auto_https off
+    admin off
+}
+
+:{$PORT:10000} {
+    root * /app/public
+    encode gzip zstd
+    php_server
+    header X-Content-Type-Options "nosniff"
+    header Referrer-Policy "strict-origin-when-cross-origin"
+}

@@ -1,0 +1,76 @@
+name: Render Free Preview Docker Smoke Test
+
+on:
+  pull_request:
+    paths:
+      - Dockerfile
+      - .dockerignore
+      - docker/**
+      - .github/workflows/render-preview.yml
+  push:
+    branches:
+      - main
+    paths:
+      - Dockerfile
+      - .dockerignore
+      - docker/**
+      - .github/workflows/render-preview.yml
+
+permissions:
+  contents: read
+
+jobs:
+  render-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build Render PHP Docker image
+        run: docker build --progress=plain -t panitia-hub-rt03:render-preview .
+      - name: Start disposable PHP preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "APP_KEY=base64:$(openssl rand -base64 32)" >> "$GITHUB_ENV"
+          docker run -d --name rt03-preview -p 10000:10000 \
+            -e APP_NAME="PANITIA HUB RT 03" \
+            -e APP_ENV=production -e APP_DEBUG=false \
+            -e APP_URL=http://127.0.0.1:10000 \
+            -e RT03_DEMO_MODE=ephemeral \
+            -e DB_CONNECTION=sqlite -e DB_DATABASE=/tmp/rt03-preview.sqlite \
+            -e SESSION_DRIVER=file -e CACHE_STORE=file -e QUEUE_CONNECTION=sync \
+            -e APP_KEY="base64:$(openssl rand -base64 32)" \
+            panitia-hub-rt03:render-preview
+      - name: Check PHP health and public page
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 90); do
+            if curl --fail --silent --output /dev/null http://127.0.0.1:10000/up; then
+              echo 'Health endpoint ready'
+              break
+            fi
+            if ! docker inspect --format='{{.State.Running}}' rt03-preview | grep -qx true; then
+              docker logs rt03-preview
+              exit 1
+            fi
+            sleep 2
+          done
+          curl --fail --silent --show-error http://127.0.0.1:10000/up
+          curl --fail --silent --show-error --output /tmp/rt03-home.html http://127.0.0.1:10000/
+          grep -qi 'Semangat' /tmp/rt03-home.html
+      - name: Reject unsafe environment before starting the container
+        shell: bash
+        run: |
+          set -euo pipefail
+          if docker run --rm -e APP_ENV=production -e APP_DEBUG=false \
+              -e APP_KEY="base64:$(openssl rand -base64 32)" \
+              -e RT03_DEMO_MODE=ephemeral -e DB_CONNECTION=sqlite \
+              -e DB_DATABASE=/app/database/database.sqlite panitia-hub-rt03:render-preview; then
+            echo 'Unsafe SQLite disk config was accepted'
+            exit 1
+          fi
+      - name: Diagnostics
+        if: always()
+        run: docker logs rt03-preview || true
