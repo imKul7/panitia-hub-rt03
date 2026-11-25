@@ -52,8 +52,8 @@ class PrizeController extends Controller
             }
             PrizeDistribution::create(['prize_id'=>$locked->id,'recipient_name'=>$data['recipient_name'],'quantity'=>$data['quantity'],'distributed_by'=>auth()->id(),'distributed_at'=>now()]);
             $locked->increment('distributed_quantity',$data['quantity']);
+            Workspace::log('prize.distributed','Penyerahan hadiah: '.$locked->title,$locked->id,'prize');
         });
-        Workspace::log('prize.distributed','Penyerahan hadiah: '.$prize->title,$prize->id,'prize');
         return back()->with('success','Penyerahan hadiah tercatat.');
     }
 }
